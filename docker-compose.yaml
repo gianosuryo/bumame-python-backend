@@ -1,0 +1,20 @@
+services:
+  web-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - target: 8000
+        published: 8000
+        mode: ingress
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+networks:
+  default:
+    name: main_overlay_network
+    external: true

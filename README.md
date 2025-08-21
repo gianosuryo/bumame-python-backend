@@ -1,0 +1,2 @@
+- At first duplication, do `uv sync` or just directly `uv run {your_app.py}`
+- 
