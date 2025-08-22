@@ -16,6 +16,7 @@
     </div>
 
     <!-- Prescreening Test Section -->
+    {% if prescreening_test_data and prescreening_test_data|length > 0 %}
     <div class="section">
       {% with is_show_photo=true %}
         {% include "identity-section.html" %}
@@ -23,133 +24,25 @@
 
       <div class="sub-section">
         <p class="sub-section-title">KELUHAN SEKARANG</p>
-        <div>
-          <p class="sub-section-subtitle">I. RIWAYAT PENYAKIT SENDIRI</p>
-          <ul class="group-info">
-            <li>
-              <p class="group-info-label">a. Riwayat Hepatitis</p>
-              <p class="group-info-value">: Tidak Ada</p>
-            </li>
-            <li>
-              <p class="group-info-label">a. Riwayat Hepatitis</p>
-              <p class="group-info-value">: Tidak Ada</p>
-            </li>
-            <li>
-              <p class="group-info-label">a. Riwayat Hepatitis</p>
-              <p class="group-info-value">: Tidak Ada</p>
-            </li>
-            <li>
-              <p class="group-info-label">a. Riwayat Hepatitis</p>
-              <p class="group-info-value">: Tidak Ada</p>
-            </li>
-            <li>
-              <p class="group-info-label">a. Riwayat Hepatitis</p>
-              <p class="group-info-value">: Tidak Ada</p>
-            </li>
-            <li>
-              <p class="group-info-label">a. Riwayat Hepatitis</p>
-              <p class="group-info-value">: Tidak Ada</p>
-            </li>
-            <li>
-              <p class="group-info-label">a. Riwayat Hepatitis</p>
-              <p class="group-info-value">: Tidak Ada</p>
-            </li>
-            <li>
-              <p class="group-info-label">a. Riwayat Hepatitis</p>
-              <p class="group-info-value">: Tidak Ada</p>
-            </li>
-            <li>
-              <p class="group-info-label">a. Riwayat Hepatitis</p>
-              <p class="group-info-value">: Tidak Ada</p>
-            </li>
-          </ul>
-        </div>
-        <div>
-          <p class="sub-section-subtitle">II. RIWAYAT PENYAKIT KELUARGA</p>
-          <ul class="group-info">
-            <li>
-              <p class="group-info-label">a. Riwayat Hepatitis</p>
-              <p class="group-info-value">: Tidak Ada</p>
-            </li>
-            <li>
-              <p class="group-info-label">a. Riwayat Hepatitis</p>
-              <p class="group-info-value">: Tidak Ada</p>
-            </li>
-            <li>
-              <p class="group-info-label">a. Riwayat Hepatitis</p>
-              <p class="group-info-value">: Tidak Ada</p>
-            </li>
-            <li>
-              <p class="group-info-label">a. Riwayat Hepatitis</p>
-              <p class="group-info-value">: Tidak Ada</p>
-            </li>
-            <li>
-              <p class="group-info-label">a. Riwayat Hepatitis</p>
-              <p class="group-info-value">: Tidak Ada</p>
-            </li>
-            <li>
-              <p class="group-info-label">a. Riwayat Hepatitis</p>
-              <p class="group-info-value">: Tidak Ada</p>
-            </li>
-            <li>
-              <p class="group-info-label">a. Riwayat Hepatitis</p>
-              <p class="group-info-value">: Tidak Ada</p>
-            </li>
-            <li>
-              <p class="group-info-label">a. Riwayat Hepatitis</p>
-              <p class="group-info-value">: Tidak Ada</p>
-            </li>
-            <li>
-              <p class="group-info-label">a. Riwayat Hepatitis</p>
-              <p class="group-info-value">: Tidak Ada</p>
-            </li>
-          </ul>
-        </div>
-        <div>
-          <p class="sub-section-subtitle">III. KEBIASAAN</p>
-          <ul class="group-info">
-            <li>
-              <p class="group-info-label">a. Riwayat Hepatitis</p>
-              <p class="group-info-value">: Tidak Ada</p>
-            </li>
-            <li>
-              <p class="group-info-label">a. Riwayat Hepatitis</p>
-              <p class="group-info-value">: Tidak Ada</p>
-            </li>
-            <li>
-              <p class="group-info-label">a. Riwayat Hepatitis</p>
-              <p class="group-info-value">: Tidak Ada</p>
-            </li>
-            <li>
-              <p class="group-info-label">a. Riwayat Hepatitis</p>
-              <p class="group-info-value">: Tidak Ada</p>
-            </li>
-            <li>
-              <p class="group-info-label">a. Riwayat Hepatitis</p>
-              <p class="group-info-value">: Tidak Ada</p>
-            </li>
-            <li>
-              <p class="group-info-label">a. Riwayat Hepatitis</p>
-              <p class="group-info-value">: Tidak Ada</p>
-            </li>
-            <li>
-              <p class="group-info-label">a. Riwayat Hepatitis</p>
-              <p class="group-info-value">: Tidak Ada</p>
-            </li>
-            <li>
-              <p class="group-info-label">a. Riwayat Hepatitis</p>
-              <p class="group-info-value">: Tidak Ada</p>
-            </li>
-            <li>
-              <p class="group-info-label">a. Riwayat Hepatitis</p>
-              <p class="group-info-value">: Tidak Ada</p>
-            </li>
-          </ul>
-        </div>
+        {% for item in prescreening_test_data %}
+          <div>
+            <p class="sub-section-subtitle">{{ item.title }}</p>
+            <ul class="group-info">
+              {% for data in item.data %}
+                <li>
+                  <p class="group-info-label">{{ data[0] }}</p>
+                  <p class="group-info-value">{{ data[1] }}</p>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endfor %}
       </div>
     </div>
+    {% endif %}
 
     <!-- Pemeriksaan Fisik Section -->
+    {% if physical_examination_data and physical_examination_data|length > 0 %}
     <div class="section">
       {% with is_show_photo=false %}
         {% include "identity-section.html" %}
@@ -159,20 +52,20 @@
         <p class="sub-section-title">PEMERIKSAAN FISIK</p>
         <div>
           <ul class="group-info">
-            <li>
-              <p class="group-info-label" style="font-weight: bold;">Kulit</p>
-              <p class="group-info-value">: Normal</p>
-            </li>
-            <li>
-              <p class="group-info-label" style="font-weight: bold;">Kulit</p>
-              <p class="group-info-value">: Normal</p>
-            </li>
+            {% for item in physical_examination_data %}
+              <li>
+                <p class="group-info-label" style="font-weight: bold;">{{ item[0] }}</p>
+                <p class="group-info-value">: {{ item[1] }}</p>
+              </li>
+            {% endfor %}
           </ul>
         </div>
       </div>
     </div>
+    {% endif %}
 
     <!-- Tanda-Tanda Vital & Visus Section -->
+    {% if vital_signs_data and vital_signs_data|length > 0 %}
     <div class="section">
       {% with is_show_photo=false %}
         {% include "identity-section.html" %}
@@ -182,63 +75,59 @@
         <p class="sub-section-title">TANDA VITAL</p>
         <div>
           <ul class="group-info">
-            <li>
-              <p class="group-info-label" style="font-weight: bold;">Tensi (mmHg)</p>
-              <p class="group-info-value">: 133/88 mmhg</p>
-            </li>
-            <li>
-              <p class="group-info-label" style="font-weight: bold;">Tensi (mmHg)</p>
-              <p class="group-info-value">: 133/88 mmhg</p>
-            </li>
+            {% for item in vital_signs_data %}
+              <li>
+                <p class="group-info-label" style="font-weight: bold;">{{ item[0] }}</p>
+                <p class="group-info-value">: {{ item[1] }}</p>
+              </li>
+            {% endfor %}
           </ul>
         </div>
       </div>
     </div>
+    {% endif %}
 
     <!-- Conclusion Section -->
     <div class="section">
-
+      {% if conclusions_data and conclusions_data|length > 0 %}
       <div class="sub-section">
         <p class="sub-section-title">KESIMPULAN</p>
         <div>
           <ul class="group-info">
-            <li>
-              <p class="group-info-label" style="font-weight: bold;">Tensi (mmHg)</p>
-              <p class="group-info-value">: 133/88 mmhg</p>
-            </li>
-            <li>
-              <p class="group-info-label" style="font-weight: bold;">Tensi (mmHg)</p>
-              <p class="group-info-value">: 133/88 mmhg</p>
-            </li>
+            {% for item in conclusions_data %}
+              <li>
+                <p class="group-info-label" style="font-weight: bold;">{{ item[0] }}</p>
+                <p class="group-info-value">: {{ item[1] }}</p>
+              </li>
+            {% endfor %}
           </ul>
         </div>
       </div>
+      {% endif %}
 
+      {% if advice_data and advice_data|length > 0 %}
       <div class="sub-section">
         <p class="sub-section-title">SARAN</p>
         <div>
-          <p style="margin: 0">Olahraga ringan rutin 3x dalam seminggu dalam durasi 30-45 menit, menjaga
-            asupan makan, cukup asupan air putih, makan bergizi dan nutrisi seimbang,
-            beristirahat yang cukup, mengelola stres dengan baik, lakukan pemeriksaan
-            tekanan darah secara berkala di fasilitas kesehatan, diet rendah lemak, konsultasi
-            dengan dokter spesialis gizi terkait berat badan berlebih, konsultasi dengan dokter
-            spesialis penyakit dalam terkait hasil laboratorium, konsultasi dengan dokter
-            spesialis paru terkait hasil rontgen. Lakukan MCU 1 tahun mendatang.</p>
+          <p style="margin: 0">{{ advice_data }}</p>
         </div>
       </div>
+      {% endif %}
 
+      {% if analysis_data and analysis_data|length > 0 %}
       <div class="sub-section">
         <p class="sub-section-title">ANALISA</p>
         <div>
-          <p style="margin: 0">Fit with note</p>
+          <p style="margin: 0">{{ analysis_data }}</p>
         </div>      
       </div>
+      {% endif %}
 
       <div class="sub-section" style="margin-top: 2rem;">
         <div style="display: block; width: 100%; float: left; text-align: right;">
-          <p style="font-weight: bold; margin: 0;">Dokter Pemeriksa</p>
-          <img src="internal_reza_signature.png" alt="Signature" style="width: 150px;">
-          <p style="font-weight: bold; margin: 0;">dr. Muhammad Reza Kurniawan</p>
+          <p style="font-weight: bold; margin: 0;">{{ dokter_pemeriksa_data.title }}</p>
+          <img src="{{ dokter_pemeriksa_data.signature_url }}" alt="Signature" style="width: 150px;">
+          <p style="font-weight: bold; margin: 0;">{{ dokter_pemeriksa_data.name }}</p>
         </div>
         <div style="clear: both;"></div>
       </div>
@@ -263,74 +152,74 @@
             </tr>
           </thead>
           <tbody>
+            {% for item in lab_section_data %}
             <tr>
-              <th colspan="5" style="padding-left: 10px; background-color: #d2ecff; text-align: left;">HEMATOLOGI</th>
+              <th colspan="5" style="padding-left: 10px; background-color: #d2ecff; text-align: left;">{{ item.title }}</th>
             </tr>
-            <tr>
-              <td style="text-align: left; padding-left: 10px;">Hemoglobin (HGB)</td>
-              <td>15.0 g/dL</td>
-              <td>g/dL</td>
-              <td>13.5 - 17.5</td>
-              <td>Normal</td>
-            </tr>
-            <tr>
-              <td style="text-align: left; padding-left: 10px;">Hemoglobin (HGB)</td>
-              <td>15.0 g/dL</td>
-              <td>g/dL</td>
-              <td>13.5 - 17.5</td>
-              <td>Normal</td>
-            </tr>
+              {% for test in item.tests %}
+              <tr>
+                <td style="text-align: left; padding-left: 10px;">{{ test.name }}</td>
+                <td>{{ test.hasil }}</td>
+                <td>{{ test.satuan }}</td>
+                <td>{{ test.nilai_rujukan }}</td>
+                <td>{{ test.keterangan }}</td>
+              </tr>
+              {% endfor %}
+            {% endfor %}
           </tbody>
         </table>
       </div>
 
       <div class="sub-section" style="margin-top: 2rem;">
         <div style="display: block; width: 50%; float: left;">
-            <p style="font-weight: bold; margin: 0;">Penanggung Jawab Laboratorium</p>
-            <img src="internal_reza_signature.png" alt="Signature" style="width: 150px;">
-            <p style="font-weight: bold; margin: 0;">dr. Muhammad Reza Kurniawan</p>
+            <p style="font-weight: bold; margin: 0;">{{ penanggung_jawab_lab_data.title }}</p>
+            <img src="{{ penanggung_jawab_lab_data.signature_url }}" alt="Signature" style="width: 150px;">
+            <p style="font-weight: bold; margin: 0;">{{ penanggung_jawab_lab_data.name }}</p>
         </div>
         <div style="display: block; width: 50%; float: left; text-align: right;">
-          <p style="font-weight: bold; margin: 0;">Diperiksa Oleh</p>
-          <img src="internal_reza_signature.png" alt="Signature" style="width: 150px;">
-          <p style="font-weight: bold; margin: 0;">dr. Muhammad Reza Kurniawan</p>
+          <p style="font-weight: bold; margin: 0;">{{ diperiksa_oleh_data.title }}</p>
+          <img src="{{ diperiksa_oleh_data.signature_url }}" alt="Signature" style="width: 150px;">
+          <p style="font-weight: bold; margin: 0;">{{ diperiksa_oleh_data.name }}</p>
         </div>
         <div style="clear: both;"></div>
       </div>
     </div>
 
     <!-- Electromedical Section -->
+    {% if electromedical_data and electromedical_data|length > 0 %}
+    {% for item in electromedical_data %}
     <div class="section">
       <div class="sub-section">
-        <h3 style="font-weight: bold; margin: 0; text-align: center;">Pemeriksaan Radiologi - Rontgen Thorax</h3>
+        <h3 style="font-weight: bold; margin: 0; text-align: center;">{{ item.title }}</h3>
         <p style="margin: 0; font-style: italic; text-align: center;">(Gambar/grafik terlampir di halaman akhir)</p>
       </div>
+      {% for data in item.data %}
       <div class="sub-section">
         <div>
-          <p style="font-weight: bold; margin: 0;">Cor:</p>
-          <p style="margin: 0;">Cor tidak membesar.</p>
+          <p style="font-weight: bold; margin: 0;">{{ data[0] }}:</p>
+          <p style="margin: 0;">{{ data[1] }}</p>
         </div>
       </div>
-      <div class="sub-section">
-        <div>
-          <p style="font-weight: bold; margin: 0;">Aorta:</p>
-          <p style="margin: 0;">• Kalsifikasi aorta (-).<br>• Elongatio aorta (-).</p>
-        </div>
-      </div>
+      {% endfor %}
       <div class="sub-section">
         <p style="margin: 0; font-style: italic;">*Dokumen Hasil Pemeriksaan ini tidak membutuhkan tanda tangan basah karena telah divalidasi dan dihasilkan oleh Sistem Informasi Bumame</p>
       </div>
     </div>
+    {% endfor %}
+    {% endif %}
 
+    {% if electromedical_data and electromedical_data|length > 0 %}
+    {% for item in electromedical_data %}
     <div class="section">
       <div class="sub-section">
-        <h3 style="font-weight: bold; margin: 0; text-align: center;">Lampiran Pemeriksaan Radiologi - Rontgen Thorax</h3>
+        <h3 style="font-weight: bold; margin: 0; text-align: center;">Lampiran {{ item.title }}</h3>
       </div>
       <div class="sub-section">
         <img src="sample-elektromedis.png" alt="Signature" style="width: 100%;">
       </div>
     </div>
-
+    {% endfor %}
+    {% endif %}
 
   </div>
 </body>
