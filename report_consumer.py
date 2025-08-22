@@ -45,10 +45,8 @@ async def process_report_generation(message: Dict[str, Any]) -> None:
             try:
                 result = agent.run_with_data(patient_data)
                 
-                if result.get('url'):
+                if result:
                     logger.info(f"Report generated successfully for batch {batch_id}")
-                    url = result['url']
-                    logger.info(f"Report url: {url}")
                     return
                 else:
                     raise ValueError("Failed to get URL from report generation")

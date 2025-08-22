@@ -1,0 +1,102 @@
+@page {
+  size: A4;
+  margin: 140px 0px 150px 0px;  /* reserve space (top/bottom) for header/footer */
+}
+
+@media print {
+  body {
+    margin: 0;
+  }
+
+  header {
+    position: fixed;
+    top: -140px;   /* pull it up into the reserved margin */
+    left: 0px;
+    right: 0px;
+    height: 100px;
+    margin-bottom: 80px;
+  }
+
+  footer {
+    position: fixed;
+    bottom: -150px; /* pull it down into the reserved margin */
+    left: 0px;
+    right: 0px;
+    height: 120px;
+    margin-top: 80px;
+  }
+
+  .content {
+    padding: 0 80px;
+  }
+
+  .section {
+    break-before: always;
+  }
+
+  :nth-child(1 of .section) {
+    break-before: avoid;
+    margin-top: 0px;
+  }
+
+  .sub-section {
+    margin-bottom: 1rem;
+  }
+  
+  .sub-section-title {
+    font-weight: bold;
+    text-decoration: underline;
+    margin:0;
+    margin-bottom: 0.5rem;
+  }
+  
+  .sub-section-subtitle {
+    font-weight: bold;
+    margin:0;
+  }
+  
+  ul.group-info {
+    display: table; 
+    width: 100%;
+    list-style: none; 
+    margin: 0; 
+    padding: 0; 
+    margin-bottom: 0.5rem;
+  }
+  
+  ul.group-info li {
+    clear: both; 
+    width: 100%; 
+    display: table-row;
+  }
+  
+  ul.group-info li p {
+    display: table-cell;
+    vertical-align: middle;
+  }
+  
+  ul.group-info li .group-info-label {
+    width: 50%; 
+    vertical-align: top;
+  }
+  
+  ul.group-info li .group-info-value {
+    width: 50%; 
+    vertical-align: top;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  td, th {
+    border: 1px solid black;
+    text-align: center;
+    padding: 2px;
+  }
+  
+  p {
+    font-size: 16px;
+  }
+}

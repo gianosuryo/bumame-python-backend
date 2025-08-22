@@ -1,0 +1,35 @@
+<div id="identity-section" class="sub-section">
+    <p class="sub-section-title">IDENTITAS PASIEN</p>
+    <div style="display: flex; flex-direction: row; gap: 24px; justify-content: space-between; width: 100%;">
+        <div style="flex:1;">
+            <ul class="group-info">
+                <li>
+                    <p class="group-info-label" style="font-weight: bold;">NIK</p>
+                    <p class="group-info-value">: {{ nik }}</p>
+                </li>
+                <li>
+                    <p class="group-info-label" style="font-weight: bold;">Nama</p>
+                    <p class="group-info-value">: {{ nama }}</p>
+                </li>
+                <li>
+                    <p class="group-info-label" style="font-weight: bold;">Tanggal Lahir</p>
+                    <p class="group-info-value">: {{ tanggal_lahir }}</p>
+                </li>
+                <li>
+                    <p class="group-info-label" style="font-weight: bold;">Jenis Kelamin</p>
+                    <p class="group-info-value">: {{ jenis_kelamin }}</p>
+                </li>
+                <li>
+                    <p class="group-info-label" style="font-weight: bold;">Kelompok</p>
+                    <p class="group-info-value">: {{ kelompok }}</p>
+                </li>
+            </ul>
+        </div>
+        
+        {% if is_show_photo %}
+        <div class="info-right" style=" width: 15%;">
+            <img src="photo-profile.png" alt="Patient Photo" style="width: 100%;">
+        </div>
+        {% endif %}
+    </div>
+</div>

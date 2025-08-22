@@ -57,7 +57,7 @@ class AgentReportGenerator:
         # Compile the graph
         self.chain = self.state_graph.compile()
 
-    def run_with_data(self, patient_data: Dict) -> Dict:
+    def run_with_data(self, patient_data: Dict) -> bool:
         """Run the report generation process with provided patient data"""
         start_time = time.time()
         logger.info(f"Starting report generation for patient {patient_data['patient_id']}")
@@ -93,7 +93,7 @@ class AgentReportGenerator:
             execution_time = time.time() - start_time
             logger.info(f"Report generation completed in {execution_time:.2f} seconds")
             
-            return final_state.get("files", {})
+            return True
             
         except Exception as e:
             logger.error(f"Error generating report: {str(e)}")
