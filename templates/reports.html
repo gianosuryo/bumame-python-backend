@@ -1,18 +1,19 @@
+<style>.text-warning { color: red; font-weight: bold; }</style>
 <body>
   <header>
-    <img src="top.png" alt="Header Bumame" style="width: 100%;">
+    <img src="{{ header_image_url }}" alt="Header Bumame" style="width: 100%;">
   </header>
 
   <footer>
     <div style="width: 100%; height: 100%;">
-      <img src="bottom.png" alt="Footer Bumame" style="width: 100%;">
+      <img src="{{ footer_image_url }}" alt="Footer Bumame" style="width: 100%;">
     </div>
   </footer>
 
   <div class="content">
     <div class="report-title" style="text-align: center; margin-bottom: 2rem;">
       <h3 style="font-weight: bold; margin: 0px;">Medical Check Up Report</h3>
-      <h4 style="font-weight: 600; margin: 0px;">( PT. GWS Medika Prima (PT Buana Tunas Sejahtera, PT. Cahaya Unggul Prima, PT. Dinamika Multi Prakarsa, PT. Dutanusa Lestari, PT. Kapuasindo Palm Industry, PT. Perkasamas Langgeng, PT. Sentrakarya Manunggal) )</h4>
+      <h4 style="font-weight: 600; margin: 0px;">( {{ patient_data.company }} )</h4>
     </div>
 
     <!-- Prescreening Test Section -->
@@ -31,7 +32,7 @@
               {% for data in item.data %}
                 <li>
                   <p class="group-info-label">{{ data[0] }}</p>
-                  <p class="group-info-value">{{ data[1] }}</p>
+                  <p class="group-info-value">: {{ data[1] }}</p>
                 </li>
               {% endfor %}
             </ul>
@@ -53,10 +54,17 @@
         <div>
           <ul class="group-info">
             {% for item in physical_examination_data %}
-              <li>
-                <p class="group-info-label" style="font-weight: bold;">{{ item[0] }}</p>
-                <p class="group-info-value">: {{ item[1] }}</p>
-              </li>
+              <div>
+                <p class="sub-section-subtitle">{{ item.title }}</p>
+                <ul class="group-info">
+                  {% for data in item.data %}
+                    <li>
+                      <p class="group-info-label style="font-weight: bold;">{{ data[0] }}</p>
+                      <p class="group-info-value">: {{ data[1] }}</p>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
             {% endfor %}
           </ul>
         </div>
@@ -76,10 +84,17 @@
         <div>
           <ul class="group-info">
             {% for item in vital_signs_data %}
-              <li>
-                <p class="group-info-label" style="font-weight: bold;">{{ item[0] }}</p>
-                <p class="group-info-value">: {{ item[1] }}</p>
-              </li>
+              <div>
+                <p class="sub-section-subtitle">{{ item.title }}</p>
+                <ul class="group-info">
+                  {% for data in item.data %}
+                    <li>
+                      <p class="group-info-label style="font-weight: bold;">{{ data[0] }}</p>
+                      <p class="group-info-value">: {{ data[1] }}</p>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
             {% endfor %}
           </ul>
         </div>
@@ -159,7 +174,7 @@
               {% for test in item.tests %}
               <tr>
                 <td style="text-align: left; padding-left: 10px;">{{ test.name }}</td>
-                <td>{{ test.hasil }}</td>
+                <td {% if test.is_contain_asterisk %}class="text-warning"{% endif %}>{{ test.hasil }}</td>
                 <td>{{ test.satuan }}</td>
                 <td>{{ test.nilai_rujukan }}</td>
                 <td>{{ test.keterangan }}</td>
@@ -215,7 +230,7 @@
         <h3 style="font-weight: bold; margin: 0; text-align: center;">Lampiran {{ item.title }}</h3>
       </div>
       <div class="sub-section">
-        <img src="sample-elektromedis.png" alt="Signature" style="width: 100%;">
+        <img src="{{ item.url }}" alt="Signature" style="width: 100%;">
       </div>
     </div>
     {% endfor %}

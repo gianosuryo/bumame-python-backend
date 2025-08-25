@@ -23,12 +23,16 @@
                     <p class="group-info-label" style="font-weight: bold;">Kelompok</p>
                     <p class="group-info-value">: {{ patient_data.kelompok }}</p>
                 </li>
+                <li>
+                    <p class="group-info-label" style="font-weight: bold;">Tanggal Pemeriksaan</p>
+                    <p class="group-info-value">: {{ patient_data.checkin_date }}</p>
+                </li>
             </ul>
         </div>
         
-        {% if is_show_photo %}
+        {% if is_show_photo and patient_data.patient_photo_url is not none %}
         <div class="info-right" style=" width: 15%;">
-            <img src="photo-profile.png" alt="Patient Photo" style="width: 100%;">
+            <img src="{{ patient_data.patient_photo_url }}" alt="Patient Photo" style="width: 100%;">
         </div>
         {% endif %}
     </div>

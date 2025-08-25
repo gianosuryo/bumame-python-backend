@@ -2,7 +2,6 @@ from helper.rmq import RabbitMQHelper
 from agent.report_generator_agent import AgentReportGenerator
 import asyncio
 import json
-import logging
 from config.logging import logger
 from dotenv import load_dotenv
 import os
@@ -10,10 +9,6 @@ from typing import Optional, Dict, Any
 import aio_pika
 
 load_dotenv()
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 # Initialize helpers
 rmq_helper = RabbitMQHelper()

@@ -306,6 +306,12 @@ class PatientService:
                 "appointment_id": appointment_id,
                 "company": company_name,  # Use company name from company_client table
                 "patient_photo_url": patient_photo_url,  # Add patient photo URL
+                "nik": patient_record[3] or "-",
+                "nama": patient_record[2] or "-",
+                "tanggal_lahir": formatted_birth_date,
+                "jenis_kelamin": patient_record[5] or "-",
+                "kelompok": patient_record[6] or "-",
+                "checkin_date": formatted_checkin_date,
                 "identity": {
                     "basic_info": [
                         [get_text("nik", language), patient_record[3] or "-"],  # nik
