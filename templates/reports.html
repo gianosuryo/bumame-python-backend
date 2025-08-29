@@ -203,36 +203,73 @@
     <!-- Electromedical Section -->
     {% if electromedical_data and electromedical_data|length > 0 %}
     {% for item in electromedical_data %}
-    <div class="section">
-      <div class="sub-section">
-        <h3 style="font-weight: bold; margin: 0; text-align: center;">{{ item.title }}</h3>
-        <p style="margin: 0; font-style: italic; text-align: center;">(Gambar/grafik terlampir di halaman akhir)</p>
-      </div>
-      {% for data in item.data %}
-      <div class="sub-section">
-        <div>
-          <p style="font-weight: bold; margin: 0;">{{ data[0] }}:</p>
-          <p style="margin: 0;">{{ data[1] }}</p>
+      <div class="section">
+        <div class="sub-section">
+          <h3 style="font-weight: bold; margin: 0; text-align: center;">{{ item.title }}</h3>
+          {% if item.key != "audiometri" %}
+            <p style="margin: 0; font-style: italic; text-align: center;">(Gambar/grafik terlampir di halaman akhir)</p>
+          {% endif %}
+        </div>
+        {% if item.key == "audiometri" %}
+          <div class="sub-section" style="text-align: center;">
+            <img src="{{ item.url }}" alt="Signature" style="width: 80%;">
+          </div>
+            <!-- [{'label': 'Telinga Kanan (AC)', 'data': [{'frequency': 250, 'value': 20}, {'frequency': 500, 'value': 20}, {'frequency': 1000, 'value': 20}, {'frequency': 2000, 'value': 20}, {'frequency': 3000, 'value': 25}, {'frequency': 4000, 'value': 25}, {'frequency': 6000, 'value': 20}, {'frequency': 8000, 'value': 25}]}, {'label': 'Telinga Kiri (AC)', 'data': [{'frequency': 250, 'value': 20}, {'frequency': 500, 'value': 20}, {'frequency': 1000, 'value': 20}, {'frequency': 2000, 'value': 25}, {'frequency': 3000, 'value': 25}, {'frequency': 4000, 'value': 25}, {'frequency': 6000, 'value': 25}, {'frequency': 8000, 'value': 25}] -->
+            {% if item.diagnosis %}
+              {% for diagnosis_item in item.diagnosis %}
+              <div class="sub-section">
+                  <p style="font-weight: bold; margin: 0;">{{ diagnosis_item.label }}</p>
+                  <table>
+                      <tr>
+                        {% for item_audiometri in diagnosis_item.data %}
+                          <td>
+                            {{ item_audiometri.frequency }} Hz
+                          </td>
+                        {% endfor %}
+                      </tr>
+                      <tr>
+                        {% for item_audiometri in diagnosis_item.data %}
+                          <td>
+                            {{ item_audiometri.value }} dB
+                          </td>
+                        {% endfor %}
+                      </tr>
+                  </table>
+              </div>
+
+              {% endfor %}
+            {% endif %}
+        {% endif %}
+
+        {% for data in item.data %}
+        <div class="sub-section">
+          <div>
+            <p style="font-weight: bold; margin: 0;">{{ data[0] }}:</p>
+            <p style="margin: 0;">{{ data[1] }}</p>
+          </div>
+        </div>
+        {% endfor %}
+        <div class="sub-section">
+          <p style="margin: 0; font-style: italic;">*Dokumen Hasil Pemeriksaan ini tidak membutuhkan tanda tangan basah karena telah divalidasi dan dihasilkan oleh Sistem Informasi Bumame</p>
         </div>
       </div>
-      {% endfor %}
-      <div class="sub-section">
-        <p style="margin: 0; font-style: italic;">*Dokumen Hasil Pemeriksaan ini tidak membutuhkan tanda tangan basah karena telah divalidasi dan dihasilkan oleh Sistem Informasi Bumame</p>
-      </div>
-    </div>
     {% endfor %}
     {% endif %}
 
+    <!-- Lampiran Electromedical Section -->
+
     {% if electromedical_data and electromedical_data|length > 0 %}
     {% for item in electromedical_data %}
-    <div class="section">
-      <div class="sub-section">
-        <h3 style="font-weight: bold; margin: 0; text-align: center;">Lampiran {{ item.title }}</h3>
+      {% if item.key != "audiometri" %}
+      <div class="section">
+        <div class="sub-section">
+          <h3 style="font-weight: bold; margin: 0; text-align: center;">Lampiran {{ item.title }}</h3>
+        </div>
+        <div class="sub-section">
+          <img src="{{ item.url }}" alt="Signature" style="width: 100%;">
+        </div>
       </div>
-      <div class="sub-section">
-        <img src="{{ item.url }}" alt="Signature" style="width: 100%;">
-      </div>
-    </div>
+      {% endif %}
     {% endfor %}
     {% endif %}
 

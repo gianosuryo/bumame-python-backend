@@ -91,6 +91,8 @@ class AgentReportGenerator:
         self.state_graph.add_edge("formatting_conclusions_advice_data", "formatting_lab_section_data")
         self.state_graph.add_edge("formatting_lab_section_data", "formatting_electromedical_data")
         self.state_graph.add_edge("formatting_electromedical_data", "generate_report")
+        # self.state_graph.add_edge("generate_report", END)
+
         self.state_graph.add_edge("generate_report", "cleanup")
         self.state_graph.add_edge("cleanup", END)
                 
@@ -605,6 +607,7 @@ class AgentReportGenerator:
                 kesimpulan = ""
                 saran = ""
                 dokter = ""
+                diagnosa_audiometri = []
                 
                 for item_data_key, item_data_value in electromedical_data[key_electromedical_data].items():
                     item_data_title = str.replace(item_data_key, "_", " ").title()
@@ -628,13 +631,44 @@ class AgentReportGenerator:
                         dokter = item_data_value["name"]
                         continue
 
-                    items_data.append([item_data_title, str.replace(item_data_value, "\n", "<br>")])
+                    if "audiometri" not in key_electromedical_data:
+                        items_data.append([item_data_title, str.replace(item_data_value, "\n", "<br>")])
+                    else:
+                        if "diagnosis" in item_data_key:
+                            diagnosa_audiometri = []
+                            if "telinga_kanan" in item_data_value:
+                                kanan_ac = item_data_value["telinga_kanan"]["ac"]
+                                if kanan_ac:
+                                    diagnosa_audiometri.append({
+                                        "label": get_text("right_ear_ac", language),
+                                        "data": kanan_ac
+                                    })
+                                kanan_bc = item_data_value["telinga_kanan"]["bc"]
+                                if kanan_bc:
+                                    diagnosa_audiometri.append({
+                                        "label": get_text("right_ear_bc", language),
+                                        "data": kanan_bc
+                                    })
+                            
+                            if "telinga_kiri" in item_data_value:
+                                kiri_ac = item_data_value["telinga_kiri"]["ac"]
+                                if kiri_ac:
+                                    diagnosa_audiometri.append({
+                                        "label": get_text("left_ear_ac", language),
+                                        "data": kiri_ac
+                                    })
+                                kiri_bc = item_data_value["telinga_kiri"]["bc"]
+                                if kiri_bc:
+                                    diagnosa_audiometri.append({
+                                        "label": get_text("left_ear_bc", language),
+                                        "data": kiri_bc
+                                    })
+                
 
                 # add kesimpulan, saran, dokter
                 items_data.append([get_text("conclusion_lower", language), str.replace(kesimpulan, "\n", "<br>")])
                 items_data.append([get_text("advice_lower", language), str.replace(saran, "\n", "<br>")])
                 items_data.append([get_text("examining_doctor", language) + "*", dokter])
-
 
                 downloaded_url_image = url_image
                 if url_image != "":
@@ -651,10 +685,14 @@ class AgentReportGenerator:
 
 
                 formatted_electromedical_data.append({
+                    "key": key_electromedical_data,
                     "title": get_text(f"electromedical_label_{key_electromedical_data}", language),
                     "data": items_data,
-                    "url": downloaded_url_image
+                    "url": downloaded_url_image,
+                    "diagnosis": diagnosa_audiometri
                 })
+            
+            logger.info(f"Formatted electromedical data: {formatted_electromedical_data}")
 
             state["formatted_electromedical_data"] = formatted_electromedical_data
         except Exception as e:
