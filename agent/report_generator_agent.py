@@ -19,6 +19,7 @@ from weasyprint import HTML, CSS
 from jinja2 import Environment, FileSystemLoader
 import os
 from datetime import datetime
+from helper.mics import ROMAN_NUMERALS
 from helper.language_mapping_medical_report import get_text
 from service.translate_service import TranslateService
 import string
@@ -57,6 +58,7 @@ class _ReportGeneratorState(TypedDict):
     formatted_penanggung_jawab_lab_data: Optional[Dict]
     formatted_diperiksa_oleh_data: Optional[Dict]
     need_to_cleaned_file: Optional[List[str]]
+    file_path: Optional[str]
     files: Optional[Dict[str, str]]
     header_image_url: Optional[str]
     footer_image_url: Optional[str]
@@ -79,7 +81,7 @@ class AgentReportGenerator:
         self.state_graph.add_node("formatting_lab_section_data", self._formatting_lab_section_data)
         self.state_graph.add_node("formatting_electromedical_data", self._formatting_electromedical_data)
         self.state_graph.add_node("generate_report", self._generate_report)
-        self.state_graph.add_node("cleanup", self._cleanup_files)
+        self.state_graph.add_node("uploadcleanup", self._upload_cleanup_files)
         
         # Define edges - starting directly from generate_report
         self.state_graph.add_edge(START, "setup_customize_variable")
@@ -93,8 +95,8 @@ class AgentReportGenerator:
         self.state_graph.add_edge("formatting_electromedical_data", "generate_report")
         # self.state_graph.add_edge("generate_report", END)
 
-        self.state_graph.add_edge("generate_report", "cleanup")
-        self.state_graph.add_edge("cleanup", END)
+        self.state_graph.add_edge("generate_report", "uploadcleanup")
+        self.state_graph.add_edge("uploadcleanup", END)
                 
         # Compile the graph
         self.chain = self.state_graph.compile()
@@ -121,6 +123,7 @@ class AgentReportGenerator:
             state: _ReportGeneratorState = {
                 "patient_id": patient_data['patient_id'],
                 "patient_data": patient_data,
+                "file_path": None,
                 "files": None,
                 "error": None,
                 "customize_variable_report": customize_variable_report,
@@ -270,7 +273,7 @@ class AgentReportGenerator:
             formatted_prescreening_test_data = []
 
             translate_service = TranslateService()
-            for title, items in sections:
+            for index, (title, items) in enumerate(sections):
                 items_data = []
                 items.sort(key=lambda x: x[0])  # Sort based on the first element of each subarray
 
@@ -291,7 +294,7 @@ class AgentReportGenerator:
                     items_data.append([title_item, display_value])
 
                 formatted_prescreening_test_data.append({
-                    "title": title,
+                    "title": f"{ROMAN_NUMERALS[index + 1]}. {title}",
                     "data": items_data
                 })
 
@@ -733,28 +736,57 @@ class AgentReportGenerator:
             )
             
             state["need_to_cleaned_file"].append(f"temp/{filename}.pdf")
-            
+            state["file_path"] = f"temp/{filename}.pdf"
+
             return state
         except Exception as e:
             logger.error(f"Error generating report: {str(e)}")
             raise
 
-    def _cleanup_files(self, state: _ReportGeneratorState) -> _ReportGeneratorState:
-        logger.info(" Cleanup files ".center(LOG_SIZE, "-"))
-        logger.info(f"Cleanup files for patient {state['patient_data']['appointment_id']}")
-        """Cleanup files"""
-        try:
-            for file in state["need_to_cleaned_file"]:
-                root_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-                file_path = os.path.join(root_folder, file)
-                if os.path.exists(file_path):
-                    os.remove(file_path)
-                else:
-                    logger.warning(f"File not found: {file}")
-            state["need_to_cleaned_file"] = []
-        except Exception as e:
-            logger.error(f"Error cleaning up files: {str(e)}")
-            raise
+    def _upload_cleanup_files(self, state: _ReportGeneratorState) -> _ReportGeneratorState:
+        logger.info(" Upload and cleanup files ".center(LOG_SIZE, "-"))
+
+        # if not os.path.exists(state["file_path"]):
+        #     raise Exception("PDF file was not created")
+
+        # # Upload to GCS immediately
+        # storage_client = storage.Client()
+        # bucket = storage_client.bucket('bumame-private-document')
+        
+        # filename = state["patient_data"].get('filename', 'report') + ".pdf"
+        # blob_name = f"b2b-medical-report/{filename}"
+        # blob = bucket.blob(blob_name)
+        
+        # # Upload file and make it public
+        # blob.upload_from_filename(state["file_path"])
+        
+        # # Get the public URL
+        # url = blob.generate_signed_url(expiration=timedelta(hours=1))
+        # logger.info(f"URL report: {url}")
+        # update_status_query = """
+        # UPDATE b2b_bumame_appointment_patient_analysis
+        # SET examination_status = 'generated',
+        #     medical_report_url_v2 = %s,
+        #     result_issued_at = NOW()
+        # WHERE appointment_patient_id = %s AND is_deleted = 0
+        # """
+        # db_postgres.execute_query(update_status_query, (filename, state["patient_data"]["patient_id"]))
+        # logger.info(f"Updated examination_status to 'generated' and saved URL for patient {state['patient_data']['patient_id']}")
+
+        # logger.info(f"Cleanup files for patient {state['patient_data']['patient_id']}")
+        # """Cleanup files"""
+        # try:
+        #     for file in state["need_to_cleaned_file"]:
+        #         root_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        #         file_path = os.path.join(root_folder, file)
+        #         if os.path.exists(file_path):
+        #             os.remove(file_path)
+        #         else:
+        #             logger.warning(f"File not found: {file}")
+        #     state["need_to_cleaned_file"] = []
+        # except Exception as e:
+        #     logger.error(f"Error cleaning up files: {str(e)}")
+        #     raise
         return state
     
     def download_and_convert_pdf_to_image(self, url) -> str:

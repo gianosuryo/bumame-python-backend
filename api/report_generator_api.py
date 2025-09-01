@@ -9,6 +9,7 @@ import uuid
 from datetime import datetime
 from service.patient_service import PatientService
 import os
+from agent.report_generator_agent import AgentReportGenerator
 
 router = APIRouter()
 rmq_helper = RabbitMQHelper()
@@ -121,13 +122,9 @@ async def generate_report(request: GenerateReportRequest, language: str = "id"):
         
         # Generate unique batch ID
         batch_id = str(uuid.uuid4())
-        
-        # Queue the report generation request
-        queue_name = os.getenv('QUEUE_NAME_REPORT_CONSUMER', 'report_generation')
-        await rmq_helper.publish(queue_name, {
-            "batch_id": batch_id,
-            "patient_data": patient_data
-        })
+
+        agent = AgentReportGenerator()
+        agent.run_with_data(patient_data)
         
         return GenerateReportResponse(
             status="processing",

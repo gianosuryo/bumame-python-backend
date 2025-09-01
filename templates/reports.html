@@ -55,8 +55,8 @@
           <ul class="group-info">
             {% for item in physical_examination_data %}
               <div>
-                <p class="sub-section-subtitle">{{ item.title }}</p>
-                <ul class="group-info">
+                <p class="sub-section-subtitle" style="text-decoration: underline;">{{ item.title }}</p>
+                <ul class="group-info" style="margin-left: 12px;">
                   {% for data in item.data %}
                     <li>
                       <p class="group-info-label style="font-weight: bold;">{{ data[0] }}</p>
@@ -80,13 +80,13 @@
       {% endwith %}
 
       <div class="sub-section">
-        <p class="sub-section-title">TANDA VITAL</p>
+        <p class="sub-section-title">TANDA-TANDA VITAL & VISUS</p>
         <div>
           <ul class="group-info">
             {% for item in vital_signs_data %}
               <div>
-                <p class="sub-section-subtitle">{{ item.title }}</p>
-                <ul class="group-info">
+                <p class="sub-section-subtitle" style="text-decoration: underline;">{{ item.title }}</p>
+                <ul class="group-info" style="margin-left: 12px;">
                   {% for data in item.data %}
                     <li>
                       <p class="group-info-label style="font-weight: bold;">{{ data[0] }}</p>
@@ -111,7 +111,7 @@
           <ul class="group-info">
             {% for item in conclusions_data %}
               <li>
-                <p class="group-info-label" style="font-weight: bold;">{{ item[0] }}</p>
+                <p class="group-info-label" style="font-weight: bold; width: 20%;">{{ item[0] }}</p>
                 <p class="group-info-value">: {{ item[1] }}</p>
               </li>
             {% endfor %}
@@ -141,7 +141,7 @@
       <div class="sub-section" style="margin-top: 2rem;">
         <div style="display: block; width: 100%; float: left; text-align: right;">
           <p style="font-weight: bold; margin: 0;">{{ dokter_pemeriksa_data.title }}</p>
-          <img src="{{ dokter_pemeriksa_data.signature_url }}" alt="Signature" style="width: 150px;">
+          <img src="{{ dokter_pemeriksa_data.signature_url }}" alt="Signature" style="height: 80px;">
           <p style="font-weight: bold; margin: 0;">{{ dokter_pemeriksa_data.name }}</p>
         </div>
         <div style="clear: both;"></div>
@@ -156,28 +156,28 @@
       {% endwith %}
 
       <div class="sub-section">
-        <table>
+        <table style="font-size: 14px;">
           <thead>
             <tr style="background-color: #f0f0f0;">
-              <th style="width: 32%; text-align: center;">PEMERIKSAAN</th>
-              <th style="width: 15%; text-align: center;">HASIL</th>
-              <th style="width: 15%; text-align: center;">SATUAN</th>
-              <th style="width: 18%; text-align: center;">NILAI RUJUKAN</th>
-              <th style="width: 20%; text-align: center;">KETERANGAN</th>
+              <th style="width: 32%; text-align: center; padding: 0 4px;">PEMERIKSAAN</th>
+              <th style="width: 15%; text-align: center; padding: 0 4px;">HASIL</th>
+              <th style="width: 15%; text-align: center; padding: 0 4px;">SATUAN</th>
+              <th style="width: 18%; text-align: center; padding: 0 4px;">NILAI RUJUKAN</th>
+              <th style="width: 20%; text-align: center; padding: 0 4px;">KETERANGAN</th>
             </tr>
           </thead>
           <tbody>
             {% for item in lab_section_data %}
             <tr>
-              <th colspan="5" style="padding-left: 10px; background-color: #d2ecff; text-align: left;">{{ item.title }}</th>
+              <th colspan="5" style="padding-left: 10px; padding-top: 0; padding-bottom: 0; background-color: #d2ecff; text-align: left;">{{ item.title }}</th>
             </tr>
               {% for test in item.tests %}
               <tr>
-                <td style="text-align: left; padding-left: 10px;">{{ test.name }}</td>
-                <td {% if test.is_contain_asterisk %}class="text-warning"{% endif %}>{{ test.hasil }}</td>
-                <td>{{ test.satuan }}</td>
-                <td>{{ test.nilai_rujukan }}</td>
-                <td>{{ test.keterangan }}</td>
+                <td style="text-align: left; padding-left: 10px; padding-top: 0; padding-bottom: 0; margin: 0;">{{ test.name }}</td>
+                <td {% if test.is_contain_asterisk %}class="text-warning"{% endif %} style="padding-top: 0; padding-bottom: 0;">{{ test.hasil }}</td>
+                <td style="padding-top: 0; padding-bottom: 0;">{{ test.satuan }}</td>
+                <td style="padding-top: 0; padding-bottom: 0;">{{ test.nilai_rujukan }}</td>
+                <td style="padding-top: 0; padding-bottom: 0;">{{ test.keterangan }}</td>
               </tr>
               {% endfor %}
             {% endfor %}
@@ -185,18 +185,17 @@
         </table>
       </div>
 
-      <div class="sub-section" style="margin-top: 2rem;">
-        <div style="display: block; width: 50%; float: left;">
+      <div class="signatures-section" style="margin-top: 2rem; page-break-inside: avoid; display: table; width: 100%;">
+        <div style="display: table-cell; width: 50%; padding-right: 1rem;">
             <p style="font-weight: bold; margin: 0;">{{ penanggung_jawab_lab_data.title }}</p>
-            <img src="{{ penanggung_jawab_lab_data.signature_url }}" alt="Signature" style="width: 150px;">
+            <img src="{{ penanggung_jawab_lab_data.signature_url }}" alt="Signature" style="height: 80px;">
             <p style="font-weight: bold; margin: 0;">{{ penanggung_jawab_lab_data.name }}</p>
         </div>
-        <div style="display: block; width: 50%; float: left; text-align: right;">
+        <div style="display: table-cell; width: 50%; text-align: right;">
           <p style="font-weight: bold; margin: 0;">{{ diperiksa_oleh_data.title }}</p>
-          <img src="{{ diperiksa_oleh_data.signature_url }}" alt="Signature" style="width: 150px;">
+          <img src="{{ diperiksa_oleh_data.signature_url }}" alt="Signature" style="height: 80px;">
           <p style="font-weight: bold; margin: 0;">{{ diperiksa_oleh_data.name }}</p>
         </div>
-        <div style="clear: both;"></div>
       </div>
     </div>
 
