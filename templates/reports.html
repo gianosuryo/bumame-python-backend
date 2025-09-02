@@ -26,7 +26,7 @@
       <div class="sub-section">
         <p class="sub-section-title">KELUHAN SEKARANG</p>
         {% for item in prescreening_test_data %}
-          <div>
+          <div class="keep-together">
             <p class="sub-section-subtitle">{{ item.title }}</p>
             <ul class="group-info">
               {% for data in item.data %}
@@ -54,7 +54,7 @@
         <div>
           <ul class="group-info">
             {% for item in physical_examination_data %}
-              <div>
+              <div class="keep-together">
                 <p class="sub-section-subtitle" style="text-decoration: underline;">{{ item.title }}</p>
                 <ul class="group-info" style="margin-left: 12px;">
                   {% for data in item.data %}
@@ -84,7 +84,7 @@
         <div>
           <ul class="group-info">
             {% for item in vital_signs_data %}
-              <div>
+              <div class="keep-together">
                 <p class="sub-section-subtitle" style="text-decoration: underline;">{{ item.title }}</p>
                 <ul class="group-info" style="margin-left: 12px;">
                   {% for data in item.data %}
@@ -129,22 +129,24 @@
       </div>
       {% endif %}
 
-      {% if analysis_data and analysis_data|length > 0 %}
-      <div class="sub-section">
-        <p class="sub-section-title">ANALISA</p>
-        <div>
-          <p style="margin: 0">{{ analysis_data }}</p>
-        </div>      
-      </div>
-      {% endif %}
-
-      <div class="sub-section" style="margin-top: 2rem;">
-        <div style="display: block; width: 100%; float: left; text-align: right;">
-          <p style="font-weight: bold; margin: 0;">{{ dokter_pemeriksa_data.title }}</p>
-          <img src="{{ dokter_pemeriksa_data.signature_url }}" alt="Signature" style="height: 80px;">
-          <p style="font-weight: bold; margin: 0;">{{ dokter_pemeriksa_data.name }}</p>
+      <div class="keep-together">
+        {% if analysis_data and analysis_data|length > 0 %}
+        <div class="sub-section">
+          <p class="sub-section-title">ANALISA</p>
+          <div>
+            <p style="margin: 0">{{ analysis_data }}</p>
+          </div>      
         </div>
-        <div style="clear: both;"></div>
+        {% endif %}
+
+        <div class="sub-section" style="margin-top: 2rem;">
+          <div style="display: block; width: 100%; float: left; text-align: right;">
+            <p style="font-weight: bold; margin: 0;">{{ dokter_pemeriksa_data.title }}</p>
+            <img src="{{ dokter_pemeriksa_data.signature_url }}" alt="Signature" style="height: 80px;">
+            <p style="font-weight: bold; margin: 0;">{{ dokter_pemeriksa_data.name }}</p>
+          </div>
+          <div style="clear: both;"></div>
+        </div>
       </div>
 
     </div>
@@ -273,8 +275,8 @@
         <div class="sub-section">
           <h3 style="font-weight: bold; margin: 0; text-align: center;">Lampiran {{ item.title }}</h3>
         </div>
-        <div class="sub-section">
-          <img src="{{ item.url }}" alt="Signature" style="width: 100%;">
+        <div class="sub-section" style="text-align: center;">
+          <img src="{{ item.url }}" alt="Signature" style="height: 100%">
         </div>
       </div>
       {% endif %}

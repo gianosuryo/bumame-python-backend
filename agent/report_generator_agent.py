@@ -833,17 +833,26 @@ class AgentReportGenerator:
             if bbox:
                 image = image.crop(bbox)
             
-            # Enhance image quality
+            # Enhance image quality and compress
             image = image.convert('RGB')
             
-            # Create bytes buffer
+            # Calculate new dimensions with max height 720px while maintaining aspect ratio
+            max_height = 720
+            ratio = max_height / float(image.size[1])  # Calculate ratio based on height only
+            new_width = int(image.size[0] * ratio)
+            new_size = (new_width, max_height)
+            
+            # Resize image
+            image = image.resize(new_size, Image.Resampling.LANCZOS)
+            
+            # Create bytes buffer with compression
             img_buffer = io.BytesIO()
-            image.save(img_buffer, format='PNG', quality=95)
+            image.save(img_buffer, format='PNG', optimize=True, quality=85)
             img_buffer.seek(0)
 
             # save image to temp file
             filename = f"temp/temp_image_{uuid.uuid4()}.png"
-            image.save(filename)
+            image.save(filename, optimize=True, quality=85)
             
             pdf_document.close()
             return filename
