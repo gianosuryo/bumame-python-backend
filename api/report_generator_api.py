@@ -123,8 +123,14 @@ async def generate_report(request: GenerateReportRequest, language: str = "id"):
         # Generate unique batch ID
         batch_id = str(uuid.uuid4())
 
-        agent = AgentReportGenerator()
-        agent.run_with_data(patient_data)
+        # agent = AgentReportGenerator()
+        # agent.run_with_data(patient_data)
+
+        queue_name = os.getenv('QUEUE_NAME_REPORT_CONSUMER', 'report_generation')
+        await rmq_helper.publish(queue_name, {
+            "batch_id": batch_id,
+            "patient_data": patient_data
+        })
         
         return GenerateReportResponse(
             status="processing",
