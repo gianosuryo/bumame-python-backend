@@ -544,6 +544,17 @@ class AgentReportGenerator:
             formatted_lab_header_data = lab_header_data
             formatted_lab_section_data = []
 
+            for lab_header_data_key, lab_header_data_value in formatted_lab_header_data.items():
+                if lab_header_data_key == "tanggal_periksa" or lab_header_data_key == "tgl_lahir":
+                    if lab_header_data_value:
+                        try:
+                            date_obj = datetime.strptime(lab_header_data_value, "%Y-%m-%d %H:%M:%S")
+                            formatted_lab_header_data[lab_header_data_key] = date_obj.strftime("%d-%m-%Y")
+                        except ValueError:
+                            formatted_lab_header_data[lab_header_data_key] = lab_header_data_value
+                else:
+                    formatted_lab_header_data[lab_header_data_key] = lab_header_data_value
+
             for section_data in lab_section_data:
                 # check subsection to see if it need to show in the report if has value in test
                 is_show_section = False
@@ -569,6 +580,9 @@ class AgentReportGenerator:
                         item_subsection_nilai_rujukan = item_subsection_tests_data["nilai_rujukan"]
                         item_subsection_satuan = item_subsection_tests_data["satuan"] if item_subsection_tests_data.get("satuan") else "-"
                         item_subsection_keterangan = item_subsection_tests_data["keterangan"] if item_subsection_tests_data.get("keterangan") else "-"
+
+                        if item_subsection_hasil.strip() == "" or item_subsection_hasil.strip() == "-":
+                            continue
 
                         item_tests.append({
                             "name": item_subsection_name,
@@ -744,49 +758,49 @@ class AgentReportGenerator:
             raise
 
     def _upload_cleanup_files(self, state: _ReportGeneratorState) -> _ReportGeneratorState:
-        logger.info(" Upload and cleanup files ".center(LOG_SIZE, "-"))
+        # logger.info(" Upload and cleanup files ".center(LOG_SIZE, "-"))
 
-        if not os.path.exists(state["file_path"]):
-            raise Exception("PDF file was not created")
+        # if not os.path.exists(state["file_path"]):
+        #     raise Exception("PDF file was not created")
 
-        # Upload to GCS immediately
-        storage_client = storage.Client()
-        bucket = storage_client.bucket('bumame-private-document')
+        # # Upload to GCS immediately
+        # storage_client = storage.Client()
+        # bucket = storage_client.bucket('bumame-private-document')
         
-        filename = state["patient_data"].get('filename', 'report') + ".pdf"
-        blob_name = f"b2b-medical-report/{filename}"
-        blob = bucket.blob(blob_name)
+        # filename = state["patient_data"].get('filename', 'report') + ".pdf"
+        # blob_name = f"b2b-medical-report/{filename}"
+        # blob = bucket.blob(blob_name)
         
-        # Upload file and make it public
-        blob.upload_from_filename(state["file_path"])
+        # # Upload file and make it public
+        # blob.upload_from_filename(state["file_path"])
         
-        # Get the public URL
-        url = blob.generate_signed_url(expiration=timedelta(hours=1))
-        logger.info(f"URL report: {url}")
-        update_status_query = """
-        UPDATE b2b_bumame_appointment_patient_analysis
-        SET examination_status = 'generated',
-            medical_report_url_v2 = %s,
-            result_issued_at = NOW()
-        WHERE appointment_patient_id = %s AND is_deleted = 0
-        """
-        db_postgres.execute_query(update_status_query, (filename, state["patient_data"]["patient_id"]))
-        logger.info(f"Updated examination_status to 'generated' and saved URL for patient {state['patient_data']['patient_id']}")
+        # # Get the public URL
+        # url = blob.generate_signed_url(expiration=timedelta(hours=1))
+        # logger.info(f"URL report: {url}")
+        # update_status_query = """
+        # UPDATE b2b_bumame_appointment_patient_analysis
+        # SET examination_status = 'generated',
+        #     medical_report_url_v2 = %s,
+        #     result_issued_at = NOW()
+        # WHERE appointment_patient_id = %s AND is_deleted = 0
+        # """
+        # db_postgres.execute_query(update_status_query, (filename, state["patient_data"]["patient_id"]))
+        # logger.info(f"Updated examination_status to 'generated' and saved URL for patient {state['patient_data']['patient_id']}")
 
-        logger.info(f"Cleanup files for patient {state['patient_data']['patient_id']}")
-        """Cleanup files"""
-        try:
-            for file in state["need_to_cleaned_file"]:
-                root_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-                file_path = os.path.join(root_folder, file)
-                if os.path.exists(file_path):
-                    os.remove(file_path)
-                else:
-                    logger.warning(f"File not found: {file}")
-            state["need_to_cleaned_file"] = []
-        except Exception as e:
-            logger.error(f"Error cleaning up files: {str(e)}")
-            raise
+        # logger.info(f"Cleanup files for patient {state['patient_data']['patient_id']}")
+        # """Cleanup files"""
+        # try:
+        #     for file in state["need_to_cleaned_file"]:
+        #         root_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        #         file_path = os.path.join(root_folder, file)
+        #         if os.path.exists(file_path):
+        #             os.remove(file_path)
+        #         else:
+        #             logger.warning(f"File not found: {file}")
+        #     state["need_to_cleaned_file"] = []
+        # except Exception as e:
+        #     logger.error(f"Error cleaning up files: {str(e)}")
+        #     raise
         return state
     
     def download_and_convert_pdf_to_image(self, url) -> str:
