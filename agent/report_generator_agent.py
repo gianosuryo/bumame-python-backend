@@ -18,7 +18,7 @@ from helper.database import db_postgres
 from weasyprint import HTML, CSS
 from jinja2 import Environment, FileSystemLoader
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from helper.mics import ROMAN_NUMERALS
 from helper.language_mapping_medical_report import get_text
 from service.translate_service import TranslateService
@@ -746,47 +746,47 @@ class AgentReportGenerator:
     def _upload_cleanup_files(self, state: _ReportGeneratorState) -> _ReportGeneratorState:
         logger.info(" Upload and cleanup files ".center(LOG_SIZE, "-"))
 
-        # if not os.path.exists(state["file_path"]):
-        #     raise Exception("PDF file was not created")
+        if not os.path.exists(state["file_path"]):
+            raise Exception("PDF file was not created")
 
-        # # Upload to GCS immediately
-        # storage_client = storage.Client()
-        # bucket = storage_client.bucket('bumame-private-document')
+        # Upload to GCS immediately
+        storage_client = storage.Client()
+        bucket = storage_client.bucket('bumame-private-document')
         
-        # filename = state["patient_data"].get('filename', 'report') + ".pdf"
-        # blob_name = f"b2b-medical-report/{filename}"
-        # blob = bucket.blob(blob_name)
+        filename = state["patient_data"].get('filename', 'report') + ".pdf"
+        blob_name = f"b2b-medical-report/{filename}"
+        blob = bucket.blob(blob_name)
         
-        # # Upload file and make it public
-        # blob.upload_from_filename(state["file_path"])
+        # Upload file and make it public
+        blob.upload_from_filename(state["file_path"])
         
-        # # Get the public URL
-        # url = blob.generate_signed_url(expiration=timedelta(hours=1))
-        # logger.info(f"URL report: {url}")
-        # update_status_query = """
-        # UPDATE b2b_bumame_appointment_patient_analysis
-        # SET examination_status = 'generated',
-        #     medical_report_url_v2 = %s,
-        #     result_issued_at = NOW()
-        # WHERE appointment_patient_id = %s AND is_deleted = 0
-        # """
-        # db_postgres.execute_query(update_status_query, (filename, state["patient_data"]["patient_id"]))
-        # logger.info(f"Updated examination_status to 'generated' and saved URL for patient {state['patient_data']['patient_id']}")
+        # Get the public URL
+        url = blob.generate_signed_url(expiration=timedelta(hours=1))
+        logger.info(f"URL report: {url}")
+        update_status_query = """
+        UPDATE b2b_bumame_appointment_patient_analysis
+        SET examination_status = 'generated',
+            medical_report_url_v2 = %s,
+            result_issued_at = NOW()
+        WHERE appointment_patient_id = %s AND is_deleted = 0
+        """
+        db_postgres.execute_query(update_status_query, (filename, state["patient_data"]["patient_id"]))
+        logger.info(f"Updated examination_status to 'generated' and saved URL for patient {state['patient_data']['patient_id']}")
 
-        # logger.info(f"Cleanup files for patient {state['patient_data']['patient_id']}")
-        # """Cleanup files"""
-        # try:
-        #     for file in state["need_to_cleaned_file"]:
-        #         root_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        #         file_path = os.path.join(root_folder, file)
-        #         if os.path.exists(file_path):
-        #             os.remove(file_path)
-        #         else:
-        #             logger.warning(f"File not found: {file}")
-        #     state["need_to_cleaned_file"] = []
-        # except Exception as e:
-        #     logger.error(f"Error cleaning up files: {str(e)}")
-        #     raise
+        logger.info(f"Cleanup files for patient {state['patient_data']['patient_id']}")
+        """Cleanup files"""
+        try:
+            for file in state["need_to_cleaned_file"]:
+                root_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                file_path = os.path.join(root_folder, file)
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+                else:
+                    logger.warning(f"File not found: {file}")
+            state["need_to_cleaned_file"] = []
+        except Exception as e:
+            logger.error(f"Error cleaning up files: {str(e)}")
+            raise
         return state
     
     def download_and_convert_pdf_to_image(self, url) -> str:
@@ -837,7 +837,7 @@ class AgentReportGenerator:
             image = image.convert('RGB')
             
             # Calculate new dimensions with max height 720px while maintaining aspect ratio
-            max_height = 720
+            max_height = 1080
             ratio = max_height / float(image.size[1])  # Calculate ratio based on height only
             new_width = int(image.size[0] * ratio)
             new_size = (new_width, max_height)
