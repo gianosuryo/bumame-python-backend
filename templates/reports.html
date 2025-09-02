@@ -166,36 +166,45 @@
               <th style="width: 20%; text-align: center; padding: 0 4px;">KETERANGAN</th>
             </tr>
           </thead>
-          <tbody>
-            {% for item in lab_section_data %}
-            <tr>
-              <th colspan="5" style="padding-left: 10px; padding-top: 0; padding-bottom: 0; background-color: #d2ecff; text-align: left;">{{ item.title }}</th>
-            </tr>
-              {% for test in item.tests %}
-              <tr>
-                <td style="text-align: left; padding-left: 10px; padding-top: 0; padding-bottom: 0; margin: 0;">{{ test.name }}</td>
-                <td {% if test.is_contain_asterisk %}class="text-warning"{% endif %} style="padding-top: 0; padding-bottom: 0;">{{ test.hasil }}</td>
-                <td style="padding-top: 0; padding-bottom: 0;">{{ test.satuan }}</td>
-                <td style="padding-top: 0; padding-bottom: 0;">{{ test.nilai_rujukan }}</td>
-                <td style="padding-top: 0; padding-bottom: 0;">{{ test.keterangan }}</td>
-              </tr>
-              {% endfor %}
-            {% endfor %}
-          </tbody>
         </table>
-      </div>
-
-      <div class="signatures-section" style="margin-top: 2rem; page-break-inside: avoid; display: table; width: 100%;">
-        <div style="display: table-cell; width: 50%; padding-right: 1rem;">
-            <p style="font-weight: bold; margin: 0;">{{ penanggung_jawab_lab_data.title }}</p>
-            <img src="{{ penanggung_jawab_lab_data.signature_url }}" alt="Signature" style="height: 80px;">
-            <p style="font-weight: bold; margin: 0;">{{ penanggung_jawab_lab_data.name }}</p>
+        {% for item in lab_section_data %}
+        <div>
+          {% if loop.last %}
+          <div class="keep-together">
+          {% endif %}
+          <table style="font-size: 14px;">
+            <tbody>
+              <tr>
+                <th colspan="5" style="padding-left: 10px; padding-top: 0; padding-bottom: 0; background-color: #d2ecff; text-align: left;">{{ item.title }}</th>
+              </tr>
+                {% for test in item.tests %}
+                <tr>
+                  <td style="width: 32%; text-align: left; padding-left: 10px; padding-top: 0; padding-bottom: 0; margin: 0;">{{ test.name }}</td>
+                  <td {% if test.is_contain_asterisk %}class="text-warning"{% endif %} style="width: 15%; padding-top: 0; padding-bottom: 0;">{{ test.hasil }}</td>
+                  <td style="width: 15%;padding-top: 0; padding-bottom: 0;">{{ test.satuan }}</td>
+                  <td style="width: 18%;padding-top: 0; padding-bottom: 0;">{{ test.nilai_rujukan }}</td>
+                  <td style="padding-top: 0; padding-bottom: 0;">{{ test.keterangan }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+          </table>
+          {% if loop.last %}
+            <div class="signatures-section" style="margin-top: 2rem; display: table; width: 100%;">
+              <div style="display: table-cell; width: 50%; padding-right: 1rem;">
+                  <p style="font-weight: bold; margin: 0;">{{ penanggung_jawab_lab_data.title }}</p>
+                  <img src="{{ penanggung_jawab_lab_data.signature_url }}" alt="Signature" style="height: 80px;">
+                  <p style="font-weight: bold; margin: 0;">{{ penanggung_jawab_lab_data.name }}</p>
+              </div>
+              <div style="display: table-cell; width: 50%; text-align: right;">
+                <p style="font-weight: bold; margin: 0;">{{ diperiksa_oleh_data.title }}</p>
+                <img src="{{ diperiksa_oleh_data.signature_url }}" alt="Signature" style="height: 80px;">
+                <p style="font-weight: bold; margin: 0;">{{ diperiksa_oleh_data.name }}</p>
+              </div>
+            </div>
+          </div>
+          {% endif %}
         </div>
-        <div style="display: table-cell; width: 50%; text-align: right;">
-          <p style="font-weight: bold; margin: 0;">{{ diperiksa_oleh_data.title }}</p>
-          <img src="{{ diperiksa_oleh_data.signature_url }}" alt="Signature" style="height: 80px;">
-          <p style="font-weight: bold; margin: 0;">{{ diperiksa_oleh_data.name }}</p>
-        </div>
+        {% endfor %}
       </div>
     </div>
 

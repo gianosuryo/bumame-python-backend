@@ -147,7 +147,7 @@ class AgentReportGenerator:
 
     def _setup_customize_variable(self, state: _ReportGeneratorState) -> _ReportGeneratorState:
         logger.info(" Generating customize variable ".center(LOG_SIZE, "-"))
-        logger.info(f"Setup customize variable for patient {state['patient_data']['appointment_id']}")
+        logger.info(f"Setup customize variable for patient {state['patient_data']['appointment_id']}/{state['patient_data']['patient_id']}")
         """Setup customize variable"""
         try:
             # Get customize variable report
@@ -231,7 +231,7 @@ class AgentReportGenerator:
 
     def _formatting_patient_data(self, state: _ReportGeneratorState) -> _ReportGeneratorState:
         logger.info(" Formatting patient data ".center(LOG_SIZE, "-"))
-        logger.info(f"Formatting patient data for patient {state['patient_data']['appointment_id']}")
+        logger.info(f"Formatting patient data for patient {state['patient_data']['appointment_id']}/{state['patient_data']['patient_id']}")
         """Format patient data"""
         try:
             patient_data = {
@@ -253,7 +253,7 @@ class AgentReportGenerator:
 
     def _formatting_prescreening_test_data(self, state: _ReportGeneratorState) -> _ReportGeneratorState:
         logger.info(" Formatting prescreening test data ".center(LOG_SIZE, "-"))
-        logger.info(f"Formatting prescreening test data for patient {state['patient_data']['appointment_id']}")
+        logger.info(f"Formatting prescreening test data for patient {state['patient_data']['appointment_id']}/{state['patient_data']['patient_id']}")
         """Format prescreening test data"""
         try:
             prescreening_test = state["patient_data"]["keluhan_sekarang"]
@@ -307,7 +307,7 @@ class AgentReportGenerator:
 
     def _formatting_physical_examination_data(self, state: _ReportGeneratorState) -> _ReportGeneratorState:
         logger.info(" Formatting physical examination data ".center(LOG_SIZE, "-"))
-        logger.info(f"Formatting physical examination data for patient {state['patient_data']['appointment_id']}")
+        logger.info(f"Formatting physical examination data for patient {state['patient_data']['appointment_id']}/{state['patient_data']['patient_id']}")
         """Format physical examination data"""
         try:
             physical_examination = state["patient_data"]["pemeriksaan_fisik"]
@@ -384,7 +384,7 @@ class AgentReportGenerator:
 
     def _formatting_vital_signs_data(self, state: _ReportGeneratorState) -> _ReportGeneratorState:
         logger.info(" Formatting vital signs data ".center(LOG_SIZE, "-"))
-        logger.info(f"Formatting vital signs data for patient {state['patient_data']['appointment_id']}")
+        logger.info(f"Formatting vital signs data for patient {state['patient_data']['appointment_id']}/{state['patient_data']['patient_id']}")
         """Format vital signs data"""
         try:
             vital_signs_data = state["patient_data"]["vital_signs"]
@@ -473,7 +473,7 @@ class AgentReportGenerator:
 
     def _formatting_conclusions_advice_data(self, state: _ReportGeneratorState) -> _ReportGeneratorState:
         logger.info(" Formatting conclusions and advice data ".center(LOG_SIZE, "-"))
-        logger.info(f"Formatting conclusions and advice data for patient {state['patient_data']['appointment_id']}")
+        logger.info(f"Formatting conclusions and advice data for patient {state['patient_data']['appointment_id']}/{state['patient_data']['patient_id']}")
         """Format conclusions and advice data"""
         try:
             translate_service = TranslateService()
@@ -526,7 +526,7 @@ class AgentReportGenerator:
 
     def _formatting_lab_section_data(self, state: _ReportGeneratorState) -> _ReportGeneratorState:
         logger.info(" Formatting lab section data ".center(LOG_SIZE, "-"))
-        logger.info(f"Formatting lab section data for patient {state['patient_data']['appointment_id']}")
+        logger.info(f"Formatting lab section data for patient {state['patient_data']['appointment_id']}/{state['patient_data']['patient_id']}")
         """Format lab section data"""
         try:
             translate_service = TranslateService()
@@ -595,7 +595,7 @@ class AgentReportGenerator:
 
     def _formatting_electromedical_data(self, state: _ReportGeneratorState) -> _ReportGeneratorState:
         logger.info(" Formatting electromedical data ".center(LOG_SIZE, "-"))
-        logger.info(f"Formatting electromedical data for patient {state['patient_data']['appointment_id']}")
+        logger.info(f"Formatting electromedical data for patient {state['patient_data']['appointment_id']}/{state['patient_data']['patient_id']}")
         """Format electromedical data"""
         try:
             electromedical_data = state["patient_data"]["electromedical_examination"]
@@ -707,7 +707,7 @@ class AgentReportGenerator:
 
     def _generate_report(self, state: _ReportGeneratorState) -> _ReportGeneratorState:
         logger.info(" Generating report ".center(LOG_SIZE, "-"))
-        logger.info(f"Generating report for patient {state['patient_data']['appointment_id']}")
+        logger.info(f"Generating report for patient {state['patient_data']['appointment_id']}/{state['patient_data']['patient_id']}")
         """Generate PDF report and upload directly to GCS"""
         try:            
             # Set up Jinja2 environment

@@ -100,9 +100,13 @@
     font-size: 16px;
   }
 
+  .keep-together {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
   .signatures-section {
     page-break-inside: avoid;
     break-inside: avoid;
-    margin-bottom: 2rem;
   }
 }
