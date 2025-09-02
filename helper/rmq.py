@@ -34,7 +34,7 @@ class RabbitMQHelper:
                     reconnect_interval=5  # Retry connection every 5 seconds
                 )
                 self.channel = await self.connection.channel()
-                await self.channel.set_qos(prefetch_count=1)
+                await self.channel.set_qos(prefetch_count=10)
                 self.logger.info("Successfully connected to RabbitMQ")
         except Exception as e:
             self.logger.error(f"Failed to connect to RabbitMQ: {str(e)}")

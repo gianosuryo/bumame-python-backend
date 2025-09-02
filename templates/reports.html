@@ -276,7 +276,7 @@
           <h3 style="font-weight: bold; margin: 0; text-align: center;">Lampiran {{ item.title }}</h3>
         </div>
         <div class="sub-section" style="text-align: center;">
-          <img src="{{ item.url }}" alt="Signature" style="height: 720px">
+          <img src="{{ item.url }}" alt="Signature" {% if item.is_landscape %}style="width: 100%;"{% else %}style="height: 720px"{% endif %}>
         </div>
       </div>
       {% endif %}

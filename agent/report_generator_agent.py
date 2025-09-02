@@ -11,6 +11,7 @@ import platform
 import requests
 import io
 import fitz  # PyMuPDF
+from typing import Tuple
 from PIL import Image
 import re
 from PIL import ImageChops
@@ -693,7 +694,7 @@ class AgentReportGenerator:
                         downloaded_url_image = url_image
                     else:
                         logger.info(f"Downloading and converting PDF to image: {key_electromedical_data}")
-                        downloaded_url_image = self.download_and_convert_pdf_to_image(url_image)
+                        downloaded_url_image, new_width, max_height = self.download_and_convert_pdf_to_image(url_image)
                         state["need_to_cleaned_file"].append(downloaded_url_image)
                         # get root folder
                         root_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -706,7 +707,8 @@ class AgentReportGenerator:
                     "title": get_text(f"electromedical_label_{key_electromedical_data}", language),
                     "data": items_data,
                     "url": downloaded_url_image,
-                    "diagnosis": diagnosa_audiometri
+                    "diagnosis": diagnosa_audiometri,
+                    "is_landscape": new_width > max_height,
                 })
             
             logger.info(f"Formatted electromedical data: {formatted_electromedical_data}")
@@ -803,7 +805,7 @@ class AgentReportGenerator:
         #     raise
         return state
     
-    def download_and_convert_pdf_to_image(self, url) -> str:
+    def download_and_convert_pdf_to_image(self, url) -> Tuple[str, int, int]:
         """Download PDF from Google Drive and convert to image"""
         try:
             # Extract file ID from Google Drive URL
@@ -869,7 +871,7 @@ class AgentReportGenerator:
             image.save(filename, optimize=True, quality=85)
             
             pdf_document.close()
-            return filename
+            return filename, new_width, max_height
             
         except Exception as e:
             logger.error(f"Error converting PDF to image: {str(e)}")
