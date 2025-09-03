@@ -39,6 +39,10 @@ async def activate_cloud_run_job():
                 "consumer": 9
             },
             {
+                "queue": 50,
+                "consumer": 6
+            },
+            {
                 "queue": 1,
                 "consumer": 3
             },
