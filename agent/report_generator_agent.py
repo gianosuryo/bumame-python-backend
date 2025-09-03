@@ -760,7 +760,7 @@ class AgentReportGenerator:
             raise
 
     def _upload_cleanup_files(self, state: _ReportGeneratorState) -> _ReportGeneratorState:
-        # logger.info(" Upload and cleanup files ".center(LOG_SIZE, "-"))
+        logger.info(" Upload and cleanup files ".center(LOG_SIZE, "-"))
 
         if not os.path.exists(state["file_path"]):
             raise Exception("PDF file was not created")
@@ -777,8 +777,8 @@ class AgentReportGenerator:
         blob.upload_from_filename(state["file_path"])
         
         # Get the public URL
-        url = blob.generate_signed_url(expiration=timedelta(hours=1))
-        logger.info(f"URL report: {url}")
+        # url = blob.generate_signed_url(expiration=timedelta(hours=1))
+        # logger.info(f"URL report: {url}")
         update_status_query = """
         UPDATE b2b_bumame_appointment_patient_analysis
         SET examination_status = 'generated',
