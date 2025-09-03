@@ -34,7 +34,7 @@ class RabbitMQHelper:
                     reconnect_interval=5  # Retry connection every 5 seconds
                 )
                 self.channel = await self.connection.channel()
-                await self.channel.set_qos(prefetch_count=10)
+                await self.channel.set_qos(prefetch_count=1)
                 self.logger.info("Successfully connected to RabbitMQ")
         except Exception as e:
             self.logger.error(f"Failed to connect to RabbitMQ: {str(e)}")
@@ -133,6 +133,60 @@ class RabbitMQHelper:
                 self.logger.error(f"Error in RabbitMQ listener: {str(e)}")
                 await asyncio.sleep(5)  # Wait before retrying
 
+    async def get_queue_message_count(self, queue_name: str) -> int:
+        """
+        Get the number of messages currently in a queue.
+        
+        Args:
+            queue_name (str): Name of the queue to check
+            
+        Returns:
+            int: Number of messages in the queue
+        """
+        try:
+            await self.connect()
+            prefixed_queue_name = self.get_prefixed_queue_name(queue_name)
+            
+            # Declare queue to ensure it exists and get its properties
+            queue = await self.channel.declare_queue(
+                prefixed_queue_name,
+                durable=True
+            )
+            
+            # Get message count from queue declaration result
+            return queue.declaration_result.message_count
+            
+        except Exception as e:
+            self.logger.error(f"Failed to get queue message count: {str(e)}")
+            raise
+
+    async def get_queue_consumer_count(self, queue_name: str) -> int:
+        """
+        Get the number of consumers currently connected to a queue.
+        
+        Args:
+            queue_name (str): Name of the queue to check
+            
+        Returns:
+            int: Number of active consumers for the queue
+        """
+        try:
+            await self.connect()
+            prefixed_queue_name = self.get_prefixed_queue_name(queue_name)
+            
+            # Declare queue to ensure it exists and get its properties
+            queue = await self.channel.declare_queue(
+                prefixed_queue_name,
+                durable=True
+            )
+            
+            # Get consumer count from queue declaration result
+            return queue.declaration_result.consumer_count
+            
+        except Exception as e:
+            self.logger.error(f"Failed to get queue consumer count: {str(e)}")
+            raise
+
     async def run(self):
         try:
             await asyncio.gather(*self.tasks)
@@ -146,13 +200,3 @@ class RabbitMQHelper:
             self.loop.run_until_complete(self.close())
         finally:
             self.loop.close()
-
-# Usage example:
-# rmq_helper = RabbitMQHelper()
-# await rmq_helper.publish("my_queue", {"key": "value"})
-# 
-# @rmq_helper.listen("my_queue")
-# async def my_callback_function(message):
-#     print(f"Received message: {message}")
-# 
-# rmq_helper.run_sync()

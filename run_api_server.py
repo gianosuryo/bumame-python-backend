@@ -7,7 +7,7 @@ load_dotenv()
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api import healthcheck_api, report_generator_api
+from api import healthcheck_api, report_generator_api, cloud_run_job_api
 from config.logging import logger
 
 # Set timezone to GMT+7 (Asia/Jakarta)
@@ -34,6 +34,7 @@ app.add_middleware(
 
 app.include_router(healthcheck_api.router, tags=["system"])
 app.include_router(report_generator_api.router, prefix="/report-generator", tags=["report-generator"])
+app.include_router(cloud_run_job_api.router, prefix="/cloud-run-job", tags=["cloud-run-job"])
 
 if __name__ == "__main__":
     import uvicorn

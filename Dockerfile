@@ -9,11 +9,6 @@ WORKDIR /app
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        curl \
-        build-essential \
-        gcc \
-        python3-dev \
-        libpq-dev \
         weasyprint \
     && rm -rf /var/lib/apt/lists/*
 

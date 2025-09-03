@@ -1,4 +1,35 @@
-<style>.text-warning { color: red; font-weight: bold; }</style>
+<style>
+@font-face {
+  font-family: 'PT Serif';
+  src: url('PTSerif-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'PT Serif';
+  src: url('PTSerif-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'PT Serif';
+  src: url('PTSerif-Italic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: italic;
+}
+
+body {
+  font-family: 'PT Serif', serif;
+}
+
+p {
+  font-size: 14px;
+}
+
+.text-warning { color: red; font-weight: bold; }
+</style>
 <body>
   <header>
     <img src="{{ header_image_url }}" alt="Header Bumame" style="width: 100%;">
@@ -13,7 +44,7 @@
   <div class="content">
     <div class="report-title" style="text-align: center; margin-bottom: 2rem;">
       <h3 style="font-weight: bold; margin: 0px;">Medical Check Up Report</h3>
-      <h4 style="font-weight: 600; margin: 0px;">( {{ patient_data.company }} )</h4>
+      <h4 style="font-weight: bold; margin: 0px;">( {{ patient_data.company }} )</h4>
     </div>
 
     <!-- Prescreening Test Section -->
@@ -217,7 +248,7 @@
         <div class="sub-section">
           <h3 style="font-weight: bold; margin: 0; text-align: center;">{{ item.title }}</h3>
           {% if item.key != "audiometri" %}
-            <p style="margin: 0; font-style: italic; text-align: center;">(Gambar/grafik terlampir di halaman akhir)</p>
+            <p style="margin: 0; font-style: italic; text-align: center; font-size: 12px;">(Gambar/grafik terlampir di halaman akhir)</p>
           {% endif %}
         </div>
         {% if item.key == "audiometri" %}
@@ -260,7 +291,7 @@
         </div>
         {% endfor %}
         <div class="sub-section">
-          <p style="margin: 0; font-style: italic;">*Dokumen Hasil Pemeriksaan ini tidak membutuhkan tanda tangan basah karena telah divalidasi dan dihasilkan oleh Sistem Informasi Bumame</p>
+          <p style="margin: 0; font-style: italic; font-size: 12px;">*Dokumen Hasil Pemeriksaan ini tidak membutuhkan tanda tangan basah karena telah divalidasi dan dihasilkan oleh Sistem Informasi Bumame</p>
         </div>
       </div>
     {% endfor %}
