@@ -747,12 +747,12 @@ class AgentReportGenerator:
 
             # Convert to PDF using WeasyPrint
             HTML(string=html_content, base_url=template_dir).write_pdf(
-                f"temp/{filename}.pdf",
+                f"tmp/{filename}.pdf",
                 stylesheets=[CSS("templates/print.css")]
             )
             
-            state["need_to_cleaned_file"].append(f"temp/{filename}.pdf")
-            state["file_path"] = f"temp/{filename}.pdf"
+            state["need_to_cleaned_file"].append(f"tmp/{filename}.pdf")
+            state["file_path"] = f"tmp/{filename}.pdf"
 
             return state
         except Exception as e:
@@ -867,7 +867,7 @@ class AgentReportGenerator:
             img_buffer.seek(0)
 
             # save image to temp file
-            filename = f"temp/temp_image_{uuid.uuid4()}.png"
+            filename = f"tmp/temp_image_{uuid.uuid4()}.png"
             image.save(filename, optimize=True, quality=85)
             
             pdf_document.close()
