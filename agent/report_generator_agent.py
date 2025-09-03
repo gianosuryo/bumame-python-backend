@@ -481,8 +481,8 @@ class AgentReportGenerator:
             language = state["patient_data"]["language"]
 
             conclusions_data = state["patient_data"]["conclusions"]
-            advice_data = state["patient_data"]["advice"]
-            analysis_data = state["patient_data"]["analysis"]
+            advice_data = str.replace(state["patient_data"]["advice"], "\n", "<br>")
+            analysis_data = str.replace(state["patient_data"]["analysis"], "\n", "<br>")
 
             formatted_conclusions_data = []
             for i, (key, value) in enumerate(conclusions_data):

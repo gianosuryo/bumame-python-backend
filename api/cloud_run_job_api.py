@@ -27,20 +27,16 @@ async def activate_cloud_run_job():
         # Determine criterion consumer vs queue count
         consumerVsQueueCrit = [
             {
-                "queue": 800,
-                "consumer": 7
-            },
-            {
-                "queue": 400,
+                "queue": 700,
                 "consumer": 5
             },
             {
-                "queue": 200,
+                "queue": 300,
                 "consumer": 4
             },
             {
                 "queue": 100,
-                "consumer": 2
+                "consumer": 3
             },
             {
                 "queue": 1,

@@ -95,9 +95,6 @@ def _has_running_execution(executions: List[Dict[str, Any]]) -> bool:
 async def _run_job(
     job: str,
     task_count: int = 1,
-    args: Optional[List[str]] = None,
-    env_vars: Optional[List[Dict[str, str]]] = None,
-    timeout: Optional[str] = None
 ) -> bool:
     """Run a Cloud Run job with specified configuration.
     
@@ -123,22 +120,7 @@ async def _run_job(
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     
     # Build request body with overrides
-    container_overrides = {}
-    if args:
-        container_overrides["args"] = args
-    if env_vars:
-        container_overrides["env"] = env_vars
-        
-    body = {"overrides": {"containerOverrides": [container_overrides]}} if container_overrides else {}
-    
-    # Add taskCount if more than 1
-    if task_count > 1:
-        body["overrides"]["taskCount"] = task_count
-        
-    # Add timeout if specified
-    if timeout:
-        body["overrides"]["timeout"] = timeout
-    
+    body = {}    
     timeout = aiohttp.ClientTimeout(total=10)
     async with aiohttp.ClientSession(timeout=timeout) as session:
         async with session.post(url, headers=headers, json=body) as resp:
@@ -148,7 +130,6 @@ async def _run_job(
                 return False
             logger.info(f"Triggered Cloud Run Job '{job}' in {region} with {task_count} parallel task(s)")
             return True
-
 
 async def ensure_cloud_run_job_started(
     args: Optional[List[str]] = None,
