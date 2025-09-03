@@ -5,7 +5,7 @@ from config.logging import logger
 from schema.base import BaseResponse
 from helper.cloud_run_job import _run_job
 import os
-import subprocess
+import math
 
 router = APIRouter()
 rmq_helper = RabbitMQHelper()
@@ -28,19 +28,19 @@ async def activate_cloud_run_job():
         consumerVsQueueCrit = [
             {
                 "queue": 700,
-                "consumer": 5
+                "consumer": 15
             },
             {
                 "queue": 300,
-                "consumer": 4
+                "consumer": 12
             },
             {
                 "queue": 100,
-                "consumer": 3
+                "consumer": 9
             },
             {
                 "queue": 1,
-                "consumer": 1
+                "consumer": 3
             },
         ]
 
@@ -53,21 +53,11 @@ async def activate_cloud_run_job():
 
 
         if consumerNeedToActivate > 0:
+            taskToActivate = math.ceil(consumerNeedToActivate / 3)
             logger.info(f"Activating {consumerNeedToActivate} Cloud Run Job")
-            # for _ in range(10):
-            #     try:
-            #         subprocess.Popen(['uv', 'run', 'report_consumer.py'], 
-            #                       stdout=subprocess.PIPE, 
-            #                       stderr=subprocess.PIPE)
-            #         logger.info("Successfully started a report consumer instance")
-            #     except Exception as e:
-            #         logger.error(f"Failed to start report consumer: {str(e)}")
-            #         raise HTTPException(
-            #             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            #             detail=f"Failed to start report consumer: {str(e)}"
-            #         )
             job = os.getenv('CLOUD_RUN_JOB_NAME', 'report_generation')
-            await _run_job(job, task_count=consumerNeedToActivate)
+            for _ in range(taskToActivate):
+                await _run_job(job)
 
         return BaseResponse(
             message="Cloud Run Job activated successfully",

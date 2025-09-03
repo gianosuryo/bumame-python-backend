@@ -94,16 +94,11 @@ def _has_running_execution(executions: List[Dict[str, Any]]) -> bool:
 
 async def _run_job(
     job: str,
-    task_count: int = 1,
 ) -> bool:
     """Run a Cloud Run job with specified configuration.
     
     Args:
         job: Cloud Run job name
-        task_count: Number of parallel tasks to run (default: 1)
-        args: List of arguments to pass to the container
-        env_vars: List of environment variables in format [{"name": "KEY", "value": "VALUE"}]
-        timeout: Job execution timeout in format like "3600s" or "1h"
     
     Returns:
         bool: True if job was triggered successfully, False otherwise
@@ -128,7 +123,6 @@ async def _run_job(
                 text = await resp.text()
                 logger.warning(f"Run job failed (status={resp.status}): {text}")
                 return False
-            logger.info(f"Triggered Cloud Run Job '{job}' in {region} with {task_count} parallel task(s)")
             return True
 
 async def ensure_cloud_run_job_started(
