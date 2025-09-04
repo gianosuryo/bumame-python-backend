@@ -7,7 +7,9 @@ import json
 import threading
 import time
 from config.logging import logger
-from typing import Any, Callable
+from typing import Any, Callable, Optional
+from google.cloud import storage
+import os
 
 
 
@@ -125,3 +127,52 @@ async def track_api_call_cost(request_data: Any, response_data: Any, total_price
                     logger.error(f"Failed to track API call cost. Status: {response.status}")
     except Exception as e:
         logger.error(f"Error tracking API call cost: {str(e)}")
+
+def download_from_gcs(bucket_name: str, source_blob_name: str, destination_file_name: Optional[str] = None) -> str:
+    """
+    Downloads a file from Google Cloud Storage to the local tmp directory.
+    
+    Args:
+        bucket_name (str): The name of the GCS bucket
+        source_blob_name (str): The path to the file in GCS (e.g. 'folder/file.pdf')
+        destination_file_name (Optional[str]): The desired local filename. If not provided, 
+                                             uses the basename of source_blob_name
+    
+    Returns:
+        str: The full path to the downloaded file
+        
+    Raises:
+        Exception: If the file cannot be downloaded or if the bucket/blob doesn't exist
+    """
+    try:
+        # Initialize the GCS client
+        storage_client = storage.Client()
+        
+        # Get the bucket
+        bucket = storage_client.bucket(bucket_name)
+        
+        # Get the blob (file)
+        blob = bucket.blob(source_blob_name)
+        
+        # If no destination filename is provided, use the source filename
+        if not destination_file_name:
+            destination_file_name = os.path.basename(source_blob_name)
+            
+        # Ensure the tmp directory exists
+        tmp_dir = os.path.join(os.getcwd(), "tmp")
+        os.makedirs(tmp_dir, exist_ok=True)
+        
+        # Create the full destination path
+        destination_path = os.path.join(tmp_dir, destination_file_name)
+        
+        # Download the file
+        logger.info(f"Downloading {source_blob_name} from bucket {bucket_name} to {destination_path}")
+        blob.download_to_filename(destination_path)
+        
+        logger.info(f"Downloaded file successfully to {destination_path}")
+        return destination_path
+        
+    except Exception as e:
+        error_msg = f"Error downloading file from GCS: {str(e)}"
+        logger.error(error_msg)
+        raise Exception(error_msg)

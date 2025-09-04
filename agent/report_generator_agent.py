@@ -25,6 +25,7 @@ from helper.language_mapping_medical_report import get_text
 from service.translate_service import TranslateService
 import string
 from service.misc_service import MiscService
+from helper.common import download_from_gcs
 
 LOG_SIZE = 100
 class CustomizeVariableReport(TypedDict):
@@ -700,7 +701,16 @@ class AgentReportGenerator:
                         downloaded_url_image = url_image
                     else:
                         logger.info(f"Downloading and converting PDF to image: {key_electromedical_data}")
-                        downloaded_url_image, new_width, max_height = self.download_and_convert_pdf_to_image(url_image)
+                        new_width = 0
+                        max_height = 0
+                        if "drive.google.com" in url_image:
+                            downloaded_url_image, new_width, max_height = self.download_and_convert_pdf_to_image(url_image)
+                        else:
+                            bucket_name = url_image.split("/")[3]
+                            source_blob_name = "/".join(url_image.split("/")[4:])
+                            logger.info(f"Downloading from GCS: {bucket_name}, {source_blob_name}")
+                            downloaded_url_image = download_from_gcs(bucket_name, source_blob_name)
+
                         state["need_to_cleaned_file"].append(downloaded_url_image)
                         # get root folder
                         root_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
