@@ -6,6 +6,18 @@ import json
 from datetime import datetime, timedelta
 
 class PatientService:
+    def update_status_to_generating(appointment_patient_id: str, appointment_id: str) -> None:
+        try:
+            update_status_query = """
+            UPDATE b2b_bumame_appointment_patient_analysis
+            SET examination_status = 'generating'
+            WHERE appointment_patient_id = %s AND appointment_id = %s AND is_deleted = 0 AND examination_status = 'generated'
+            """
+            db_postgres.execute_query(update_status_query, (appointment_patient_id, appointment_id))
+        except Exception as e:
+            logger.error(f"Error in update_status_to_generating: {str(e)}")
+            raise
+
     def get_patient_data(appointment_patient_id: str, appointment_id: str, language: str = "id") -> Dict[str, Any]:
         """
         Get patient data from database for report generation

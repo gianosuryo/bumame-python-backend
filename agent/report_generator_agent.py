@@ -60,6 +60,7 @@ class _ReportGeneratorState(TypedDict):
     formatted_diperiksa_oleh_data: Optional[Dict]
     need_to_cleaned_file: Optional[List[str]]
     file_path: Optional[str]
+    url_file_path: Optional[str]
     files: Optional[Dict[str, str]]
     header_image_url: Optional[str]
     footer_image_url: Optional[str]
@@ -102,7 +103,7 @@ class AgentReportGenerator:
         # Compile the graph
         self.chain = self.state_graph.compile()
 
-    def run_with_data(self, patient_data: Dict) -> bool:
+    def run_with_data(self, patient_data: Dict) -> str:
         """Run the report generation process with provided patient data"""
         start_time = time.time()
         logger.info(f"Starting report generation for patient {patient_data['patient_id']}")
@@ -125,6 +126,7 @@ class AgentReportGenerator:
                 "patient_id": patient_data['patient_id'],
                 "patient_data": patient_data,
                 "file_path": None,
+                "url_file_path": "",
                 "files": None,
                 "error": None,
                 "customize_variable_report": customize_variable_report,
@@ -139,8 +141,9 @@ class AgentReportGenerator:
             
             execution_time = time.time() - start_time
             logger.info(f"Report generation completed in {execution_time:.2f} seconds")
+            logger.info(f"URL file path: {final_state['url_file_path']}")
             
-            return True
+            return final_state["url_file_path"]
             
         except Exception as e:
             logger.error(f"Error generating report: {str(e)}")
@@ -222,7 +225,7 @@ class AgentReportGenerator:
             except Exception as e:
                 logger.error(f"Failed to get customize variable report: {str(e)}")
                 state["error"] = f"Failed to get customize variable report: {str(e)}"
-                return state
+                raise
             
         except Exception as e:
             logger.error(f"Error setting up customize variable: {str(e)}")
@@ -767,11 +770,13 @@ class AgentReportGenerator:
 
         # Upload to GCS immediately
         storage_client = storage.Client()
-        bucket = storage_client.bucket('bumame-private-document')
+        bucket_name = 'bumame-private-document'
+        bucket = storage_client.bucket(bucket_name)
         
         filename = state["patient_data"].get('filename', 'report') + ".pdf"
         blob_name = f"b2b-medical-report/{filename}"
         blob = bucket.blob(blob_name)
+        state["url_file_path"] = f"https://storage.googleapis.com/{bucket_name}/{blob_name}"
         
         # Upload file and make it public
         blob.upload_from_filename(state["file_path"])
@@ -786,7 +791,7 @@ class AgentReportGenerator:
             result_issued_at = NOW()
         WHERE appointment_patient_id = %s AND is_deleted = 0
         """
-        db_postgres.execute_query(update_status_query, (filename, state["patient_data"]["patient_id"]))
+        db_postgres.execute_query(update_status_query, (state["url_file_path"], state["patient_data"]["patient_id"]))
         logger.info(f"Updated examination_status to 'generated' and saved URL for patient {state['patient_data']['patient_id']}")
 
         logger.info(f"Cleanup files for patient {state['patient_data']['patient_id']}")
