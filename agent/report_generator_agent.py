@@ -696,13 +696,14 @@ class AgentReportGenerator:
                 items_data.append([get_text("examining_doctor", language) + "*", dokter])
 
                 downloaded_url_image = url_image
+                new_width = 0
+                max_height = 0
                 if url_image != "":
                     if key_electromedical_data == "audiometri":
                         downloaded_url_image = url_image
                     else:
                         logger.info(f"Downloading and converting PDF to image: {key_electromedical_data}")
-                        new_width = 0
-                        max_height = 0
+                        
                         if "drive.google.com" in url_image:
                             downloaded_url_image, new_width, max_height = self.download_and_convert_pdf_to_image(url_image)
                         else:
