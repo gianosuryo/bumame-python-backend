@@ -161,11 +161,12 @@ class AgentReportGenerator:
                 WHERE bap.id = %s AND bap.is_deleted = 0 AND bacv.is_deleted = 0
             """
             try:
-                customize_variable_report = db_postgres.fetch_query(get_customize_variable_report_query, (state["patient_data"]["appointment_id"],))
+                customize_variable_report = db_postgres.fetch_query(get_customize_variable_report_query, (state["patient_data"]["patient_id"],))
                 if customize_variable_report:
                     for row in customize_variable_report:
                         # Access tuple elements by index: row[0] = key, row[1] = value
                         state["customize_variable_report"][row[0]] = row[1]
+                        logger.info(f"Customize variable report: {row[0]} = {row[1]}")
                 
                 current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
                 assets_dir = os.path.join(current_dir, "assets")
@@ -174,6 +175,8 @@ class AgentReportGenerator:
                     state["customize_variable_report"]["header_image_url"] = state["customize_variable_report"]["header_image_url"]
                 else:
                     state["customize_variable_report"]["header_image_url"] = os.path.join(assets_dir, "top-bumame.png")
+
+                logger.info(f"Header image URL: {state['customize_variable_report']['header_image_url']}")
 
                 if state["customize_variable_report"].get("footer_image_url") is not None:
                     state["customize_variable_report"]["footer_image_url"] = state["customize_variable_report"]["footer_image_url"]
