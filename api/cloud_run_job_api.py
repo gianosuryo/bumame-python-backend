@@ -13,6 +13,18 @@ rmq_helper = RabbitMQHelper()
 @router.post("/activate", response_model=BaseResponse[Dict[str, Any]])
 async def activate_cloud_run_job():
     try:
+        rmq_prefix = os.getenv('RMQ_PREFIX', '')
+        # Skip activating cloud run job in dev environment
+        if rmq_prefix == 'dev':
+            return BaseResponse(
+                message="Cloud Run Job activated successfully",
+                data={
+                    "queueAvailable": 0,
+                    "consumerRunning": 0,
+                    "consumerNeedToActivate": 0
+                }
+            )
+        
         queue_name = os.getenv('QUEUE_NAME_REPORT_CONSUMER', 'report_generation')
         
         # Check how many messages in RMQ queue are available
