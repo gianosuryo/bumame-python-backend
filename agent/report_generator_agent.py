@@ -553,7 +553,7 @@ class AgentReportGenerator:
             formatted_lab_section_data = []
 
             for lab_header_data_key, lab_header_data_value in formatted_lab_header_data.items():
-                if lab_header_data_key == "tanggal_periksa" or lab_header_data_key == "tgl_lahir":
+                if lab_header_data_key == "tanggal_periksa" or lab_header_data_key == "tgl_lahir" or lab_header_data_key == "tanggal_lahir":
                     if lab_header_data_value:
                         try:
                             date_obj = datetime.strptime(lab_header_data_value, "%Y-%m-%d %H:%M:%S")
@@ -563,49 +563,33 @@ class AgentReportGenerator:
                 else:
                     formatted_lab_header_data[lab_header_data_key] = lab_header_data_value
 
-            for section_data in lab_section_data:
-                # check subsection to see if it need to show in the report if has value in test
-                is_show_section = False
-                sections_name = translate_service.lab_label(section_data["name"], language)
-                subsections_data = section_data["subsections"]
+            # if lab_section_data is array
+            if isinstance(lab_section_data, list):
+                for section_data in lab_section_data:
+                    # check subsection to see if it need to show in the report if has value in test
+                    sections_name = translate_service.lab_label(section_data["name"], language)
+                    subsections_data = section_data["subsections"]
 
-                item_tests = []
+                    item_tests = self.appending_lab_subsection_data_v1(subsections_data)
 
-                for item_subsections_data in subsections_data:
-                    for item_subsection_tests_data in item_subsections_data["tests"]:
-                        subsection_hasil = item_subsection_tests_data["hasil"]
-
-                        if subsection_hasil and subsection_hasil.strip() != "":
-                            is_show_section = True
-                            break
-
-                    if not is_show_section:
-                        continue
-
-                    for item_subsection_tests_data in item_subsections_data["tests"]:
-                        item_subsection_hasil = item_subsection_tests_data["hasil"]
-                        item_subsection_name = item_subsection_tests_data["name"]
-                        item_subsection_nilai_rujukan = item_subsection_tests_data["nilai_rujukan"]
-                        item_subsection_satuan = item_subsection_tests_data["satuan"] if item_subsection_tests_data.get("satuan") else "-"
-                        item_subsection_keterangan = item_subsection_tests_data["keterangan"] if item_subsection_tests_data.get("keterangan") else "-"
-
-                        if item_subsection_hasil.strip() == "" or item_subsection_hasil.strip() == "-":
-                            continue
-
-                        item_tests.append({
-                            "name": item_subsection_name,
-                            "hasil": item_subsection_hasil,
-                            "satuan": item_subsection_satuan,
-                            "nilai_rujukan": item_subsection_nilai_rujukan,
-                            "keterangan": item_subsection_keterangan,
-                            "is_contain_asterisk": "*" in item_subsection_hasil.strip().lower()
+                    if len(item_tests) > 0:
+                        formatted_lab_section_data.append({
+                            "title": sections_name,
+                            "tests": item_tests
                         })
+            else:
+                for lab_data_key, lab_data_value in lab_section_data.items():
+                    print(lab_data_value)
+                    sections_name = translate_service.lab_label(lab_data_value["name"], language)
+                    subsections_data = lab_data_value["subsections"]
 
-                if len(item_tests) > 0:
-                    formatted_lab_section_data.append({
-                        "title": sections_name,
-                        "tests": item_tests
-                    })
+                    item_tests = self.appending_lab_subsection_data_v2(subsections_data)
+
+                    if len(item_tests) > 0:
+                        formatted_lab_section_data.append({
+                            "title": sections_name,
+                            "tests": item_tests
+                        })
 
             state["formatted_lab_header_data"] = formatted_lab_header_data
             state["formatted_lab_section_data"] = formatted_lab_section_data
@@ -909,3 +893,76 @@ class AgentReportGenerator:
             if match:
                 return match.group(1)
         return None
+
+    def appending_lab_subsection_data_v1(self, subsections_data) -> List[Dict]:
+        item_tests = []
+        is_show_section = False
+        
+        for item_subsections_data in subsections_data:
+            for item_subsection_tests_data in item_subsections_data["tests"]:
+                subsection_hasil = item_subsection_tests_data["hasil"]
+
+                if subsection_hasil and subsection_hasil.strip() != "":
+                    is_show_section = True
+                    break
+
+            if not is_show_section:
+                continue
+
+            for item_subsection_tests_data in item_subsections_data["tests"]:
+                item_subsection_hasil = item_subsection_tests_data["hasil"]
+                item_subsection_name = item_subsection_tests_data["name"]
+                item_subsection_nilai_rujukan = item_subsection_tests_data["nilai_rujukan"]
+                item_subsection_satuan = item_subsection_tests_data["satuan"] if item_subsection_tests_data.get("satuan") else "-"
+                item_subsection_keterangan = item_subsection_tests_data["keterangan"] if item_subsection_tests_data.get("keterangan") else "-"
+
+                if item_subsection_hasil.strip() == "" or item_subsection_hasil.strip() == "-":
+                    continue
+
+                item_tests.append({
+                    "name": item_subsection_name,
+                    "hasil": item_subsection_hasil,
+                    "satuan": item_subsection_satuan,
+                    "nilai_rujukan": item_subsection_nilai_rujukan,
+                    "keterangan": item_subsection_keterangan,
+                    "is_contain_asterisk": "*" in item_subsection_hasil.strip().lower()
+                })
+
+        return item_tests
+
+    def appending_lab_subsection_data_v2(self, subsections_data) -> List[Dict]:
+        item_tests = []
+        is_show_section = False
+        
+        for item_subsections_key, item_subsections_data in subsections_data.items():
+            subsection_hasil = item_subsections_data["hasil"]
+            subsection_biosys_code = item_subsections_data["biosys_code"]
+
+            if (subsection_hasil and subsection_hasil.strip() != "") or "catpasien" in subsection_biosys_code:
+                is_show_section = True
+                break
+        
+        if not is_show_section:
+            return []
+
+        for item_subsections_key, item_subsections_data in subsections_data.items():
+            item_subsection_hasil = item_subsections_data["hasil"]
+            item_subsection_name = item_subsections_data["name"]
+            item_subsection_nilai_rujukan = item_subsections_data["nilai_rujukan"]
+            item_subsection_satuan = item_subsections_data["satuan"] if item_subsections_data.get("satuan") else "-"
+            item_subsection_keterangan = item_subsections_data["keterangan"] if item_subsections_data.get("keterangan") else "-"
+            item_subsection_biosys_code = item_subsections_data["biosys_code"]
+
+            if (item_subsection_hasil.strip() == "" or item_subsection_hasil.strip() == "-") and "catpasien" not in item_subsection_biosys_code:
+                continue
+
+            item_tests.append({
+                "name": item_subsection_name,
+                "hasil": item_subsection_hasil,
+                "satuan": item_subsection_satuan,
+                "nilai_rujukan": item_subsection_nilai_rujukan,
+                "keterangan": item_subsection_keterangan,
+                "is_contain_asterisk": "*" in item_subsection_hasil.strip().lower()
+            })
+
+        return item_tests
