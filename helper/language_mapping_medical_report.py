@@ -153,6 +153,8 @@ LANGUAGE_MAPPING_SATUAN = {
         "Lainnya": "Other",
         "Kurang dari": "Less than",
         "Lebih dari": "More than",
+        "Ya, kurang dari": "Yes, less than",
+        "Ya, lebih dari": "Yes, more than",
         "batang / hari": "sticks / day",
         "mm/jam": "mm/h",
         "Positif": "Positive",
@@ -377,6 +379,7 @@ OTHER_LABEL_MAPPING = {
         "Diperiksa Oleh": "Examined By",
         "Perempuan": "Female",
         "Laki-laki": "Male",
+        "Laki - laki": "Male",
     }
 }
 
@@ -483,6 +486,7 @@ LAB_LABEL_MAPPING = {
         "Warna": "Color",
         "Kejernihan": "Clarity",
         "Berat jenis": "Specific Gravity",
+        "Berat Jenis": "Specific Gravity",
         "Leukosit Negatif": "Leukocytes Negative",
         "Eritrosit Negatif": "Erythrocytes Negative", 
         "Leukosit Esterase": "Leukocyte Esterase",

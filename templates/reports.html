@@ -43,7 +43,7 @@ p {
 
   <div class="content">
     <div class="report-title" style="text-align: center; margin-bottom: 2rem;">
-      <h3 style="font-weight: bold; margin: 0px;">Medical Check Up Report</h3>
+      <h3 style="font-weight: bold; margin: 0px;">{{ placeholder.medical_checkup_report }}</h3>
       <h4 style="font-weight: bold; margin: 0px;">( {{ patient_data.company }} )</h4>
     </div>
 
@@ -55,7 +55,7 @@ p {
       {% endwith %}
 
       <div class="sub-section">
-        <p class="sub-section-title">KELUHAN SEKARANG</p>
+        <p class="sub-section-title">{{ placeholder.current_complaints }}</p>
         {% for item in prescreening_test_data %}
           <div class="keep-together">
             <p class="sub-section-subtitle">{{ item.title }}</p>
@@ -81,7 +81,7 @@ p {
       {% endwith %}
 
       <div class="sub-section">
-        <p class="sub-section-title">PEMERIKSAAN FISIK</p>
+        <p class="sub-section-title">{{ placeholder.physical_examination }}</p>
         <div>
           <ul class="group-info">
             {% for item in physical_examination_data %}
@@ -111,7 +111,7 @@ p {
       {% endwith %}
 
       <div class="sub-section">
-        <p class="sub-section-title">TANDA-TANDA VITAL & VISUS</p>
+        <p class="sub-section-title">{{ placeholder.vital_signs }}</p>
         <div>
           <ul class="group-info">
             {% for item in vital_signs_data %}
@@ -137,7 +137,7 @@ p {
     <div class="section">
       {% if conclusions_data and conclusions_data|length > 0 %}
       <div class="sub-section">
-        <p class="sub-section-title">KESIMPULAN</p>
+        <p class="sub-section-title">{{ placeholder.conclusion }}</p>
         <div>
           <ul class="group-info">
             {% for item in conclusions_data %}
@@ -153,7 +153,7 @@ p {
 
       {% if advice_data and advice_data|length > 0 %}
       <div class="sub-section">
-        <p class="sub-section-title">SARAN</p>
+        <p class="sub-section-title">{{ placeholder.advice }}</p>
         <div>
           <p style="margin: 0">{{ advice_data }}</p>
         </div>
@@ -163,7 +163,7 @@ p {
       <div class="keep-together">
         {% if analysis_data and analysis_data|length > 0 %}
         <div class="sub-section">
-          <p class="sub-section-title">ANALISA</p>
+          <p class="sub-section-title">{{ placeholder.analysis }}</p>
           <div>
             <p style="margin: 0">{{ analysis_data }}</p>
           </div>      
@@ -192,11 +192,11 @@ p {
         <table style="font-size: 14px;">
           <thead>
             <tr style="background-color: #f0f0f0;">
-              <th style="width: 32%; text-align: center; padding: 0 4px;">PEMERIKSAAN</th>
-              <th style="width: 15%; text-align: center; padding: 0 4px;">HASIL</th>
-              <th style="width: 15%; text-align: center; padding: 0 4px;">SATUAN</th>
-              <th style="width: 18%; text-align: center; padding: 0 4px;">NILAI RUJUKAN</th>
-              <th style="width: 20%; text-align: center; padding: 0 4px;">KETERANGAN</th>
+              <th style="width: 32%; text-align: center; padding: 0 4px;">{{ placeholder.examination }}</th>
+              <th style="width: 15%; text-align: center; padding: 0 4px;">{{ placeholder.result }}</th>
+              <th style="width: 15%; text-align: center; padding: 0 4px;">{{ placeholder.unit }}</th>
+              <th style="width: 18%; text-align: center; padding: 0 4px;">{{ placeholder.reference_value }}</th>
+              <th style="width: 20%; text-align: center; padding: 0 4px;">{{ placeholder.notes }}</th>
             </tr>
           </thead>
         </table>
@@ -248,7 +248,7 @@ p {
         <div class="sub-section">
           <h3 style="font-weight: bold; margin: 0; text-align: center;">{{ item.title }}</h3>
           {% if item.key != "audiometri" %}
-            <p style="margin: 0; font-style: italic; text-align: center; font-size: 12px;">(Gambar/grafik terlampir di halaman akhir)</p>
+            <p style="margin: 0; font-style: italic; text-align: center; font-size: 12px;">{{ placeholder.attachment_note }}</p>
           {% endif %}
         </div>
         {% if item.key == "audiometri" %}
@@ -291,7 +291,7 @@ p {
         </div>
         {% endfor %}
         <div class="sub-section">
-          <p style="margin: 0; font-style: italic; font-size: 12px;">*Dokumen Hasil Pemeriksaan ini tidak membutuhkan tanda tangan basah karena telah divalidasi dan dihasilkan oleh Sistem Informasi Bumame</p>
+          <p style="margin: 0; font-style: italic; font-size: 12px;">{{ placeholder.validation_note }}</p>
         </div>
       </div>
     {% endfor %}
@@ -304,7 +304,7 @@ p {
       {% if item.key != "audiometri" %}
       <div class="section">
         <div class="sub-section">
-          <h3 style="font-weight: bold; margin: 0; text-align: center;">Lampiran {{ item.title }}</h3>
+          <h3 style="font-weight: bold; margin: 0; text-align: center;">{{ placeholder.attachment_prefix }} {{ item.title }}</h3>
         </div>
         <div class="sub-section" style="text-align: center;">
           <img src="{{ item.url }}" alt="Image" {% if item.is_landscape %}style="width: 100%;"{% else %}style="max-height: 720px; height: 100%; max-width: 600px;"{% endif %}>

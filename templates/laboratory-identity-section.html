@@ -1,22 +1,22 @@
 <div class="sub-section" id="laboratory-identity-section">
-    <p class="sub-section-title" style="color: rgb(13, 52, 131); text-decoration: none;">LABORATORY TEST RESULT</p>
+    <p class="sub-section-title" style="color: rgb(13, 52, 131); text-decoration: none;">{{ placeholder.laboratory_test_result }}</p>
     <div style="display: flex; flex-direction: row; gap: 24px; justify-content: space-between; width: 100%;">
         <div style="flex:1;">
             <ul class="group-info">
                 <li>
-                    <p class="group-info-label" style="font-weight: bold;">No. Barcode Sample</p>
+                    <p class="group-info-label" style="font-weight: bold;">{{ placeholder.no_barcode_sample }}</p>
                     <p class="group-info-value">: {{ lab_header_data.no_barcode }}</p>
                 </li>
                 <li>
-                    <p class="group-info-label" style="font-weight: bold;">Jenis Kelamin</p>
+                    <p class="group-info-label" style="font-weight: bold;">{{ placeholder.gender }}</p>
                     <p class="group-info-value">: {{ lab_header_data.jenis_kelamin }}</p>
                 </li>
                 <li>
-                    <p class="group-info-label" style="font-weight: bold;">Tgl. Lahir</p>
+                    <p class="group-info-label" style="font-weight: bold;">{{ placeholder.birth_date }}</p>
                     <p class="group-info-value">: {{ lab_header_data.tgl_lahir or lab_header_data.tanggal_lahir }}</p>
                 </li>
                 <li>
-                    <p class="group-info-label" style="font-weight: bold;">Alamat</p>
+                    <p class="group-info-label" style="font-weight: bold;">{{ placeholder.address }}</p>
                     <p class="group-info-value">: {{ lab_header_data.alamat }}</p>
                 </li>
             </ul>
@@ -24,19 +24,19 @@
         <div style="flex:1;">
             <ul class="group-info">
                 <li>
-                    <p class="group-info-label" style="font-weight: bold;">Nama</p>
+                    <p class="group-info-label" style="font-weight: bold;">{{ placeholder.name }}</p>
                     <p class="group-info-value">: {{ lab_header_data.nama }}</p>
                 </li>
                 <li>
-                    <p class="group-info-label" style="font-weight: bold;">Telepon/HP</p>
+                    <p class="group-info-label" style="font-weight: bold;">{{ placeholder.phone }}</p>
                     <p class="group-info-value">: {{ lab_header_data.nohp }}</p>
                 </li>
                 <li>
-                    <p class="group-info-label" style="font-weight: bold;">Tanggal Periksa</p>
+                    <p class="group-info-label" style="font-weight: bold;">{{ placeholder.examination_date }}</p>
                     <p class="group-info-value">: {{ lab_header_data.tanggal_periksa }}</p>
                 </li>
                 <li>
-                    <p class="group-info-label" style="font-weight: bold;">Lokasi Pengambilan Spesimen</p>
+                    <p class="group-info-label" style="font-weight: bold;">{{ placeholder.location }}</p>
                     <p class="group-info-value">: {{ lab_header_data.lokasi_pengambilan }}</p>
                 </li>
             </ul>

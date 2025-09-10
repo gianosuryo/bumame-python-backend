@@ -154,6 +154,8 @@ class AgentReportGenerator:
         logger.info(" Generating customize variable ".center(LOG_SIZE, "-"))
         logger.info(f"Setup customize variable for patient {state['patient_data']['appointment_id']}/{state['patient_data']['patient_id']}")
         """Setup customize variable"""
+        language = state["patient_data"]["language"]
+
         try:
             # Get customize variable report
             get_customize_variable_report_query = """
@@ -186,17 +188,17 @@ class AgentReportGenerator:
 
                 dokter_pemeriksa_data = {
                     "name": "dr. Muhammad Reza Kurniawan",
-                    "title": "Dokter Pemeriksa",
+                    "title": get_text("examining_doctor", language),
                     "signature_url": os.path.join(assets_dir, "internal_reza_signature.png")
                 }
                 penanggung_jawab_lab_data = {
                     "name": "dr. Dwi Utomo Nusantara, Sp. PK",
-                    "title": "Penanggung Jawab Laboratorium",
+                    "title": get_text("laboratory_supervisor", language),
                     "signature_url": os.path.join(assets_dir, "penanggung_jawab_dwi_utomo_signature.jpg")
                 }
                 diperiksa_oleh_data = {
                     "name": "Yaufita Lokananta",
-                    "title": "Diperiksa Oleh",
+                    "title": get_text("examined_by", language),
                     "signature_url": os.path.join(assets_dir, "pemeriksa_yaufita_signature.jpg")
                 }
 
@@ -241,12 +243,14 @@ class AgentReportGenerator:
         logger.info(" Formatting patient data ".center(LOG_SIZE, "-"))
         logger.info(f"Formatting patient data for patient {state['patient_data']['appointment_id']}/{state['patient_data']['patient_id']}")
         """Format patient data"""
+        language = state["patient_data"]["language"]
+        translate_service = TranslateService()
         try:
             patient_data = {
                 'nik': state["patient_data"]["nik"],
                 'nama': state["patient_data"]["nama"],
                 'tanggal_lahir': state["patient_data"]["tanggal_lahir"],
-                'jenis_kelamin': state["patient_data"]["jenis_kelamin"],
+                'jenis_kelamin': translate_service.other_label(state["patient_data"]["jenis_kelamin"], language),
                 'kelompok': state["patient_data"]["kelompok"],
                 'checkin_date': state["patient_data"]["checkin_date"],
                 'company': state["patient_data"]["company"],
@@ -287,6 +291,7 @@ class AgentReportGenerator:
 
                 for i, (key, value) in enumerate(items):
                     display_value = value.strip() if value else ""
+                    key = re.sub(r'[a-zA-Z]\. ', '', key)
                     title_item = translate_service.prescreening_test_label(key, language)
 
                     if not display_value or display_value == "" or display_value.lower() in ["null", "none", "n/a", "-"]:
@@ -294,7 +299,6 @@ class AgentReportGenerator:
                     else:
                         display_value = translate_service.prescreening_test_answer(value, language)
 
-                    key = re.sub(r'[a-zA-Z]\. ', '', key)
 
                     if f"{string.ascii_lowercase[i]}." not in title_item:
                         title_item = f"{string.ascii_lowercase[i]}. {title_item}"
@@ -337,12 +341,14 @@ class AgentReportGenerator:
                 "Lainnya":[]
             }
 
+            translate_service = TranslateService()
+
             # would be like this : {"Kepala dan Sistem Endokrin": [["Kepala & Leher", "Normal"]]}
             list_data_new = {}
             for header_key, header_value in list_data_header.items():
-                list_data_new[header_key] = []
+                # list_data_new[header_key] = []
+                list_data_new[translate_service.pemeriksaan_fisik_label(header_key, language)] = []
 
-            translate_service = TranslateService()
             for i, (key, value) in enumerate(physical_examination):
                 is_skipped = False
                 for header_key, header_value in list_data_header.items():
@@ -368,7 +374,7 @@ class AgentReportGenerator:
                                 new_value = "-"
 
                             formatted_label_key = string.capwords(formatted_label_key)
-                            list_data_new[header_key].append([formatted_label_key, new_value])
+                            list_data_new[translate_service.pemeriksaan_fisik_label(header_key, language)].append([formatted_label_key, new_value])
                             is_skipped = True
                             break
 
@@ -406,11 +412,12 @@ class AgentReportGenerator:
                 "Lainnya":[]
             }
 
+            translate_service = TranslateService()
+
             list_data_new = {}
             for header_key, header_value in list_data_header.items():
-                list_data_new[header_key] = []
+                list_data_new[translate_service.vital_signs_label(header_key, language)] = []
 
-            translate_service = TranslateService()
             for (key, value) in vital_signs_data:
                 is_skipped = False
                 for header_key, header_value in list_data_header.items():
@@ -427,12 +434,12 @@ class AgentReportGenerator:
                             if lower_header_value_item == "tinggi badan":
                                 height_str = formatted_value
                             
-                            list_data_new[header_key].append([formatted_label_key, formatted_value])
+                            list_data_new[translate_service.vital_signs_label(header_key, language)].append([formatted_label_key, formatted_value])
                             is_skipped = True
                             break
 
                 if not is_skipped:
-                    list_data_new["Lainnya"].append([key, value])
+                    list_data_new[translate_service.vital_signs_label("Lainnya", language)].append([key, value])
 
             formatted_vital_signs_data = []
             for header_key, header_value in list_data_new.items():
@@ -560,6 +567,8 @@ class AgentReportGenerator:
                             formatted_lab_header_data[lab_header_data_key] = date_obj.strftime("%d-%m-%Y")
                         except ValueError:
                             formatted_lab_header_data[lab_header_data_key] = lab_header_data_value
+                elif lab_header_data_key == "jenis_kelamin":
+                    formatted_lab_header_data[lab_header_data_key] = translate_service.other_label(lab_header_data_value, language)
                 else:
                     formatted_lab_header_data[lab_header_data_key] = lab_header_data_value
 
@@ -570,7 +579,7 @@ class AgentReportGenerator:
                     sections_name = translate_service.lab_label(section_data["name"], language)
                     subsections_data = section_data["subsections"]
 
-                    item_tests = self.appending_lab_subsection_data_v1(subsections_data)
+                    item_tests = self.appending_lab_subsection_data_v1(subsections_data, language)
 
                     if len(item_tests) > 0:
                         formatted_lab_section_data.append({
@@ -583,7 +592,7 @@ class AgentReportGenerator:
                     sections_name = translate_service.lab_label(lab_data_value["name"], language)
                     subsections_data = lab_data_value["subsections"]
 
-                    item_tests = self.appending_lab_subsection_data_v2(subsections_data)
+                    item_tests = self.appending_lab_subsection_data_v2(subsections_data, language)
 
                     if len(item_tests) > 0:
                         formatted_lab_section_data.append({
@@ -730,10 +739,42 @@ class AgentReportGenerator:
             # Set up Jinja2 environment
             template_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'templates')
             env = Environment(loader=FileSystemLoader(template_dir))
+
+            language = state["patient_data"]["language"]
+
+            placeholder_string = {
+                'validation_note': get_text("validation_note", language),
+                'attachment_prefix': get_text("attachment_prefix", language),
+                'attachment_note': get_text("attachment_note", language),
+                'examination': get_text("examination", language),
+                'result': get_text("result", language),
+                'unit': get_text("unit", language),
+                'reference_value': get_text("reference_value", language),
+                'notes': get_text("notes", language),
+                'medical_checkup_report': get_text("medical_checkup_report", language),
+                'current_complaints': get_text("current_complaints", language),
+                'physical_examination': get_text("physical_examination", language),
+                'vital_signs': get_text("vital_signs", language),
+                'conclusion': get_text("conclusion", language),
+                'advice': get_text("advice", language),
+                'analysis': get_text("analysis", language),
+                'patient_identity': get_text("patient_identity", language),
+                'nik': get_text("nik", language),
+                'name': get_text("name", language),
+                'birth_date': get_text("birth_date", language),
+                'gender': get_text("gender", language),
+                'group': get_text("group", language),
+                'examination_date': get_text("examination_date", language),
+                'laboratory_test_result': get_text("laboratory_test_result", language),
+                'no_barcode_sample': get_text("barcode_sample", language),
+                'phone': get_text("phone", language),
+                'address': get_text("address", language),
+                'location': get_text("specimen_location", language),
+            }
             
             # Load and render the main template
             template = env.get_template('reports.html')
-            html_content = template.render(patient_data=state["formatted_patient_data"], prescreening_test_data=state["formatted_prescreening_test_data"], physical_examination_data=state["formatted_physical_examination_data"], vital_signs_data=state["formatted_vital_signs_data"], conclusions_data=state["formatted_conclusions_data"], advice_data=state["formatted_advice_data"], analysis_data=state["formatted_analysis_data"], lab_header_data=state["formatted_lab_header_data"], lab_section_data=state["formatted_lab_section_data"], electromedical_data=state["formatted_electromedical_data"], dokter_pemeriksa_data=state["formatted_dokter_pemeriksa_data"], penanggung_jawab_lab_data=state["formatted_penanggung_jawab_lab_data"], diperiksa_oleh_data=state["formatted_diperiksa_oleh_data"], header_image_url=state["header_image_url"], footer_image_url=state["footer_image_url"])
+            html_content = template.render(patient_data=state["formatted_patient_data"], prescreening_test_data=state["formatted_prescreening_test_data"], physical_examination_data=state["formatted_physical_examination_data"], vital_signs_data=state["formatted_vital_signs_data"], conclusions_data=state["formatted_conclusions_data"], advice_data=state["formatted_advice_data"], analysis_data=state["formatted_analysis_data"], lab_header_data=state["formatted_lab_header_data"], lab_section_data=state["formatted_lab_section_data"], electromedical_data=state["formatted_electromedical_data"], dokter_pemeriksa_data=state["formatted_dokter_pemeriksa_data"], penanggung_jawab_lab_data=state["formatted_penanggung_jawab_lab_data"], diperiksa_oleh_data=state["formatted_diperiksa_oleh_data"], header_image_url=state["header_image_url"], footer_image_url=state["footer_image_url"], placeholder=placeholder_string)
 
             patient_name = state["patient_data"]["identity"]["basic_info"][1][1]
             company_name = state["patient_data"]["company"]
@@ -894,10 +935,10 @@ class AgentReportGenerator:
                 return match.group(1)
         return None
 
-    def appending_lab_subsection_data_v1(self, subsections_data) -> List[Dict]:
+    def appending_lab_subsection_data_v1(self, subsections_data, language) -> List[Dict]:
         item_tests = []
         is_show_section = False
-        
+        translate_service = TranslateService()
         for item_subsections_data in subsections_data:
             for item_subsection_tests_data in item_subsections_data["tests"]:
                 subsection_hasil = item_subsection_tests_data["hasil"]
@@ -920,19 +961,21 @@ class AgentReportGenerator:
                     continue
 
                 item_tests.append({
-                    "name": item_subsection_name,
-                    "hasil": item_subsection_hasil,
-                    "satuan": item_subsection_satuan,
-                    "nilai_rujukan": item_subsection_nilai_rujukan,
+                    "name": translate_service.lab_label(item_subsection_name, language),
+                    "hasil": translate_service.lab_answer(item_subsection_hasil, language),
+                    "satuan": translate_service.lab_answer(item_subsection_satuan, language),
+                    "nilai_rujukan": translate_service.lab_answer(item_subsection_nilai_rujukan, language),
                     "keterangan": item_subsection_keterangan,
                     "is_contain_asterisk": "*" in item_subsection_hasil.strip().lower()
                 })
 
         return item_tests
 
-    def appending_lab_subsection_data_v2(self, subsections_data) -> List[Dict]:
+    def appending_lab_subsection_data_v2(self, subsections_data, language) -> List[Dict]:
         item_tests = []
         is_show_section = False
+
+        translate_service = TranslateService()
         
         for item_subsections_key, item_subsections_data in subsections_data.items():
             subsection_hasil = item_subsections_data["hasil"]
@@ -957,10 +1000,10 @@ class AgentReportGenerator:
                 continue
 
             item_tests.append({
-                "name": item_subsection_name,
-                "hasil": item_subsection_hasil,
+                "name": translate_service.lab_label(item_subsection_name, language),
+                "hasil": translate_service.lab_answer(item_subsection_hasil, language),
                 "satuan": item_subsection_satuan,
-                "nilai_rujukan": item_subsection_nilai_rujukan,
+                "nilai_rujukan": translate_service.lab_answer(item_subsection_nilai_rujukan, language),
                 "keterangan": item_subsection_keterangan,
                 "is_contain_asterisk": "*" in item_subsection_hasil.strip().lower()
             })

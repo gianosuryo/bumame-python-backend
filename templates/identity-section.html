@@ -1,30 +1,30 @@
 <div id="identity-section" class="sub-section">
-    <p class="sub-section-title">IDENTITAS PASIEN</p>
+    <p class="sub-section-title">{{ placeholder.patient_identity }}</p>
     <div style="display: flex; flex-direction: row; gap: 24px; justify-content: space-between; width: 100%;">
         <div style="flex:1;">
             <ul class="group-info">
                 <li>
-                    <p class="group-info-label" style="font-weight: bold;">NIK</p>
+                    <p class="group-info-label" style="font-weight: bold;">{{ placeholder.nik }}</p>
                     <p class="group-info-value">: {{ patient_data.nik }}</p>
                 </li>
                 <li>
-                    <p class="group-info-label" style="font-weight: bold;">Nama</p>
+                    <p class="group-info-label" style="font-weight: bold;">{{ placeholder.name }}</p>
                     <p class="group-info-value">: {{ patient_data.nama }}</p>
                 </li>
                 <li>
-                    <p class="group-info-label" style="font-weight: bold;">Tanggal Lahir</p>
+                    <p class="group-info-label" style="font-weight: bold;">{{ placeholder.birth_date }}</p>
                     <p class="group-info-value">: {{ patient_data.tanggal_lahir }}</p>
                 </li>
                 <li>
-                    <p class="group-info-label" style="font-weight: bold;">Jenis Kelamin</p>
+                    <p class="group-info-label" style="font-weight: bold;">{{ placeholder.gender }}</p>
                     <p class="group-info-value">: {{ patient_data.jenis_kelamin }}</p>
                 </li>
                 <li>
-                    <p class="group-info-label" style="font-weight: bold;">Kelompok</p>
+                    <p class="group-info-label" style="font-weight: bold;">{{ placeholder.group }}</p>
                     <p class="group-info-value">: {{ patient_data.kelompok }}</p>
                 </li>
                 <li>
-                    <p class="group-info-label" style="font-weight: bold;">Tanggal Pemeriksaan</p>
+                    <p class="group-info-label" style="font-weight: bold;">{{ placeholder.examination_date }}</p>
                     <p class="group-info-value">: {{ patient_data.checkin_date }}</p>
                 </li>
             </ul>
