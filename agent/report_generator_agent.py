@@ -747,7 +747,7 @@ class AgentReportGenerator:
                 'attachment_prefix': get_text("attachment_prefix", language),
                 'attachment_note': get_text("attachment_note", language),
                 'examination': get_text("examination", language),
-                'result': get_text("result", language),
+                'result': get_text("result_value", language),
                 'unit': get_text("unit", language),
                 'reference_value': get_text("reference_value", language),
                 'notes': get_text("notes", language),
