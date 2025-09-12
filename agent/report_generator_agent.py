@@ -691,7 +691,7 @@ class AgentReportGenerator:
                 downloaded_url_image = url_image
                 new_width = 0
                 max_height = 0
-                if url_image != "":
+                if url_image != "" and url_image != None:
                     if key_electromedical_data == "audiometri":
                         downloaded_url_image = url_image
                     else:
